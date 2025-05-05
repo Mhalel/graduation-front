@@ -9,8 +9,11 @@ import PageTitleUpdater from "./PageTitleUpdater";
 import Accounts from "./pages/dashBoard/accounts/Accounts";
 import ChartPage from "./pages/dashBoard/ChartsPage/ChartPage";
 import ProfilePage from "./pages/ProfilePage/Profile";
+import { useAuth } from "./hooks/AuthContext";
+import PricingPage from "./pages/PricingPage/PricingPage";
 // import Messanger from "./pages/messenger/app";
 function App() {
+  const { auth } = useAuth();
   return (
     <div className="">
       {/* <PageTitleUpdater /> */}
@@ -19,16 +22,18 @@ function App() {
           <Route index element={<LandingPage />} />
           <Route path="signin" element={<Signin />} />
           <Route path="signup" element={<Signup />} />
-          <Route path="Profile" element={<ProfilePage />} />
-        </Route>
+          <Route path="Pricing" element={<PricingPage />} />
 
-        <Route path="/dashboard" element={<DashBoard />}>
-          <Route index element={<Navigate to="charts" />} />
-          <Route path="charts" element={<ChartPage />} />
-          <Route path="account" element={<Accounts />} />
-          {/* <Route path="Support" element={<Messanger />} /> */}
-
+          {auth && <Route path="Profile/:id" element={<ProfilePage />} />}
         </Route>
+        {auth && (
+          <Route path="/dashboard" element={<DashBoard />}>
+            <Route index element={<Navigate to="charts" />} />
+            <Route path="charts" element={<ChartPage />} />
+            <Route path="account" element={<Accounts />} />
+            {/* <Route path="Support" element={<Messanger />} /> */}
+          </Route>
+        )}
 
         <Route path="*" element={<NoPage />} />
       </Routes>

@@ -7,19 +7,25 @@ import { HelmetProvider } from "react-helmet-async";
 import "./index.css";
 import App from "./App.jsx";
 import { PopupProvider } from "./hooks/popupContext.jsx";
+import { SnackbarProvider } from "./hooks/SnackBar.jsx";
+import { AuthProvider } from "./hooks/AuthContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Router>
-      <PopupProvider>
-        <ThemeProvider>
-          <LangProvider>
-            <HelmetProvider>
-              <App />
-            </HelmetProvider>
-          </LangProvider>
-        </ThemeProvider>
-      </PopupProvider>
+      <LangProvider>
+        <AuthProvider>
+          <SnackbarProvider>
+            <PopupProvider>
+              <ThemeProvider>
+                <HelmetProvider>
+                  <App />
+                </HelmetProvider>
+              </ThemeProvider>
+            </PopupProvider>
+          </SnackbarProvider>
+        </AuthProvider>
+      </LangProvider>
     </Router>
   </StrictMode>
 );

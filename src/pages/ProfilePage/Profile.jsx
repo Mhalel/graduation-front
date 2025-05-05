@@ -1,9 +1,11 @@
 // import { useState, useEffect } from "react";
 
+import { useAuth } from "@/hooks/AuthContext";
 import { usePopup } from "@/hooks/popupContext";
 import { useTheme } from "@/hooks/themeprovider";
 import { CgCloseR } from "react-icons/cg";
 export default function ProfilePage() {
+  const { account, auth } = useAuth();
   const { popup } = usePopup();
   const handleSowProfileImage = (photo) => {
     popup.run(
@@ -18,9 +20,9 @@ export default function ProfilePage() {
           src={
             photo
               ? photo
-              : gender === "male"
+              : account?.gender === "male"
               ? "/manAvatar.jpg"
-              : gender === "female"
+              : account?.gender === "female"
               ? "/womanAvatar.jpg"
               : "/avatar.png"
           }
@@ -30,7 +32,6 @@ export default function ProfilePage() {
       </div>
     );
   };
-  const gender = "male";
   return (
     <div className={`min-h-screen bg-background text-foreground`}>
       <div className="  px-4 py-8 mx-auto">
@@ -40,15 +41,7 @@ export default function ProfilePage() {
             className="h-96 bg-gradient-to-r  cursor-pointer from-primary-foreground to-secondary"
           >
             <img
-              src={
-                "/cover.jpg"
-                  ? "/cover.jpg"
-                  : gender === "male"
-                  ? "/manAvatar.jpg"
-                  : gender === "female"
-                  ? "/womanAvatar.jpg"
-                  : "/avatar.png"
-              }
+              src={"/cover.jpg"}
               alt="Profile"
               className="h-full w-full object-cover"
             />
@@ -64,9 +57,9 @@ export default function ProfilePage() {
                   src={
                     "/Ahmed.jpg"
                       ? "/Ahmed.jpg"
-                      : gender === "male"
+                      : account?.gender === "male"
                       ? "/manAvatar.jpg"
-                      : gender === "female"
+                      : account?.gender === "female"
                       ? "/womanAvatar.jpg"
                       : "/avatar.png"
                   }
@@ -80,7 +73,7 @@ export default function ProfilePage() {
             <div className="pt-20">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h2 className="text-2xl font-bold">Alexandra Johnson</h2>
+                  <h2 className="text-2xl font-bold">{account?.fullName}</h2>
                   <p className="text-muted-foreground">
                     Senior Product Designer
                   </p>

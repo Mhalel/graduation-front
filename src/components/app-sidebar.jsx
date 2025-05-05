@@ -14,7 +14,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Link, useNavigate } from "react-router-dom";
-import { T } from "@/hooks/LangContext";
+import { useT } from "@/hooks/LangContext";
+import { useAuth } from "@/hooks/AuthContext";
 
 // Menu items.
 const items = [
@@ -47,6 +48,8 @@ const items = [
 const gender = "male";
 const photo = "/Ahmed.jpg";
 export function AppSidebar() {
+  const T = useT();
+  const { account } = useAuth();
   return (
     <Sidebar>
       <SidebarContent>
@@ -65,9 +68,11 @@ export function AppSidebar() {
                       : "/avatar.png"
                   }
                 />
-                <AvatarFallback className={"text-black"}>Ah</AvatarFallback>
+                <AvatarFallback className={"text-black"}>
+                  {account?.userName?.slice(0, 2)}
+                </AvatarFallback>
               </Avatar>
-              <span className="text-sm font-medium">Ahmed</span>
+              <span className="text-sm font-medium">{account?.userName}</span>
             </Link>
           </SidebarGroupLabel>
           <SidebarGroupContent className="mt-5">

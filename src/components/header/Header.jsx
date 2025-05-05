@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Bell, Menu, X, User, LogOut, Globe, Moon, Sun } from "lucide-react";
-import { T, useLang } from "@/hooks/LangContext";
+import { useLang, useT } from "@/hooks/LangContext";
 import { Link } from "react-router-dom";
 import { useTheme } from "@/hooks/themeprovider";
+import { useAuth } from "@/hooks/AuthContext";
 
 const Header = () => {
+  const { account, auth } = useAuth();
+  const T = useT();
   const { lang, setLang } = useLang();
   const { isDark, toggleTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -43,6 +46,7 @@ const Header = () => {
     { nameAr: "عربي", nameEn: "Arabic", val: "ar" },
     { nameAr: "إنجليزي", nameEn: "English", val: "en" },
   ];
+
   return (
     <header
       dir={lang === "en" ? "ltr" : "rtl"}
@@ -92,45 +96,21 @@ const Header = () => {
             <nav className="hidden md:block">
               <ul className="flex items-center space-x-1">
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to={"/dashboard"}
                     className="text-foreground hover:bg-accent/30 px-3 py-2 rounded-md text-sm font-medium flex items-center"
                   >
                     {T("", "Dashboard")}
-                  </a>
-                </li>
-                <li>
-                  <Link
-                    to="#"
-                    className="text-foreground hover:bg-accent/30 px-3 py-2 rounded-md text-sm font-medium flex items-center"
-                  >
-                    {T("","")}
-                    Products
                   </Link>
                 </li>
+
                 <li>
-                  <a
-                    href="#"
-                    className="text-foreground hover:bg-accent/30 px-3 py-2 rounded-md text-sm font-medium flex items-center"
-                  >
-                    Analytics
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-foreground hover:bg-accent/30 px-3 py-2 rounded-md text-sm font-medium"
-                  >
-                    Resources
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
+                  <Link
+                    to={"/Pricing"}
                     className="text-foreground hover:bg-accent/30 px-3 py-2 rounded-md text-sm font-medium"
                   >
                     Pricing
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </nav>
@@ -179,33 +159,42 @@ const Header = () => {
                 </div>
               )}
             </div>
+            {auth && (
+              <>
+                <button className="p-2 rounded-full text-foreground hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-ring transition-colors">
+                  <Bell className="h-5 w-5" />
+                </button>
 
-            <button className="p-2 rounded-full text-foreground hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-ring transition-colors">
-              <Bell className="h-5 w-5" />
-            </button>
+                <Link
+                  to={"Profile/" + account?._id}
+                  className="h-7 w-7 rounded-full bg-primary flex items-center justify-center overflow-hidden"
+                >
+                  <span className="text-xs font-medium text-primary-foreground">
+                    {account?.userName?.slice(0, 2)}
+                  </span>
+                </Link>
+                <Link to={"Profile/" + account?._id} className="text-sm font-medium text-foreground">
+                  {account?.userName}
+                </Link>
+              </>
+            )}
+            {!auth && (
+              <>
+                <Link
+                  to={"/signIn"}
+                  className="text-foreground hover:bg-accent/30 px-4 py-1.5 rounded-md font-medium text-sm transition-colors"
+                >
+                  Sign in
+                </Link>
 
-            <div className="h-7 w-7 rounded-full bg-primary flex items-center justify-center overflow-hidden">
-              <span className="text-xs font-medium text-primary-foreground">
-                JD
-              </span>
-            </div>
-            <span className="text-sm font-medium text-foreground">
-              John Doe
-            </span>
-
-            <Link
-              to={"/signIn"}
-              className="text-foreground hover:bg-accent/30 px-4 py-1.5 rounded-md font-medium text-sm transition-colors"
-            >
-              Sign in
-            </Link>
-
-            <Link
-              to={"/Signup"}
-              className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-1.5 rounded-md font-medium text-sm transition-colors"
-            >
-              Sign up
-            </Link>
+                <Link
+                  to={"/Signup"}
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-1.5 rounded-md font-medium text-sm transition-colors"
+                >
+                  Sign up
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button - only visible on mobile */}
@@ -247,30 +236,12 @@ const Header = () => {
             >
               Dashboard
             </a>
-            <a
-              href="#"
-              className="text-foreground hover:bg-accent/30 block px-3 py-2 rounded-md text-base font-medium"
-            >
-              Products
-            </a>
-            <a
-              href="#"
-              className="text-foreground hover:bg-accent/30 block px-3 py-2 rounded-md text-base font-medium"
-            >
-              Analytics
-            </a>
-            <a
-              href="#"
-              className="text-foreground hover:bg-accent/30 block px-3 py-2 rounded-md text-base font-medium"
-            >
-              Resources
-            </a>
-            <a
-              href="#"
+            <Link
+              to={"/Pricing"}
               className="text-foreground hover:bg-accent/30 block px-3 py-2 rounded-md text-base font-medium"
             >
               Pricing
-            </a>
+            </Link>
           </div>
 
           {/* Language selector in mobile menu */}

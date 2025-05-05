@@ -1,14 +1,13 @@
 // /* eslint-disable prettier/prettier */
 
-import { T,
-  //  useLang
-   } from "@/hooks/LangContext";
+import { useT } from "@/hooks/LangContext";
 // import { useTheme } from "@/hooks/themeprovider";
 import { useNavigate } from "react-router-dom";
 function NoPage() {
   // const { lang } = useLang();
   // const { isDark } = useTheme();
   const nav = useNavigate();
+  const T = useT();
   return (
     <section className="bg-transparent h-screen flex items-center justify-center">
       <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">

@@ -1,4 +1,10 @@
-import { useState, useContext, createContext, useCallback, useMemo } from "react";
+import {
+  useState,
+  useContext,
+  createContext,
+  useCallback,
+  useMemo,
+} from "react";
 
 const LangContext = createContext(null);
 
@@ -12,9 +18,14 @@ export const LangProvider = ({ children }) => {
     setLang(newLang);
   }, []);
 
-  const contextValue = useMemo(() => ({ lang, setLang: updateLang }), [lang, updateLang]);
+  const contextValue = useMemo(
+    () => ({ lang, setLang: updateLang }),
+    [lang, updateLang]
+  );
 
-  return <LangContext.Provider value={contextValue}>{children}</LangContext.Provider>;
+  return (
+    <LangContext.Provider value={contextValue}>{children}</LangContext.Provider>
+  );
 };
 
 // Custom Hook for accessing language context
@@ -27,7 +38,7 @@ export const useLang = () => {
 };
 
 // Optimized Translation Component
-export const T = ( ar, en ) => {
+export const useT = () => {
   const { lang } = useLang();
-  return <>{lang === "ar" ? ar : en}</>;
+  return (ar, en) => (lang === "ar" ? ar : en);
 };
