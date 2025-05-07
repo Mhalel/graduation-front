@@ -16,6 +16,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useT } from "@/hooks/LangContext";
 import { useAuth } from "@/hooks/AuthContext";
+import { IoGameController } from "react-icons/io5";
 
 // Menu items.
 const items = [
@@ -29,15 +30,15 @@ const items = [
     url: "account",
     icon: BsFillCalculatorFill,
   },
+  // {
+  //   title: { ar: "الدعم", en: "Support" },
+  //   url: "Support",
+  //   icon: MdSupportAgent,
+  // },
   {
-    title: { ar: "الدعم", en: "Support" },
-    url: "Support",
-    icon: MdSupportAgent,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search,
+    title: { ar: "التحكم", en: "Control" },
+    url: "control",
+    icon: IoGameController ,
   },
   {
     title: "Settings",
@@ -55,7 +56,7 @@ export function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="flex items-center gap-5">
-            <Link to="/Profile" className="flex items-center gap-5">
+            <Link to={`/Profile/${account?._id}`} className="flex items-center gap-5">
               <Avatar>
                 <AvatarImage
                   src={
@@ -80,7 +81,7 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem
                   className={"flex flex-col gap-3"}
-                  key={item.title}
+                  key={item.url}
                 >
                   <SidebarMenuButton asChild>
                     <Link to={item.url}>

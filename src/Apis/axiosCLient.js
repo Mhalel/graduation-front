@@ -1,6 +1,5 @@
 import axios from "axios";
-
-export const SERVER_BASE_URL = "http://localhost:7000/api/v1";
+export const SERVER_BASE_URL = import.meta.env.VITE_SERVER_BASE_URL;
 
 const axiosClient = axios.create({
   baseURL: SERVER_BASE_URL,

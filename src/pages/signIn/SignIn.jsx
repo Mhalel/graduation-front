@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/AuthContext";
 import { useT } from "@/hooks/LangContext";
 import { useSnackbar } from "@/hooks/SnackBar";
 import { useState } from "react";
-import { FaS } from "react-icons/fa6";
+import { FaS, FaSpinner } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 
 const Signin = () => {
@@ -58,7 +58,7 @@ const Signin = () => {
           openSnackbar(T("تم التسجيل بنجاح", "Singedin successfully"), {
             type: "success",
           });
-          nav("/dashboard");
+          nav("/dashboard/charts");
         })
         .catch(() => {
           setLoading(false);

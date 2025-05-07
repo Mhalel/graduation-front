@@ -4,9 +4,10 @@ import { useLang, useT } from "@/hooks/LangContext";
 import { Link } from "react-router-dom";
 import { useTheme } from "@/hooks/themeprovider";
 import { useAuth } from "@/hooks/AuthContext";
+import { LuLogOut } from "react-icons/lu";
 
 const Header = () => {
-  const { account, auth } = useAuth();
+  const { account, auth, logout } = useAuth();
   const T = useT();
   const { lang, setLang } = useLang();
   const { isDark, toggleTheme } = useTheme();
@@ -46,7 +47,7 @@ const Header = () => {
     { nameAr: "عربي", nameEn: "Arabic", val: "ar" },
     { nameAr: "إنجليزي", nameEn: "English", val: "en" },
   ];
-
+  const userImage = "/Ahmed.jpg";
   return (
     <header
       dir={lang === "en" ? "ltr" : "rtl"}
@@ -170,12 +171,27 @@ const Header = () => {
                   className="h-7 w-7 rounded-full bg-primary flex items-center justify-center overflow-hidden"
                 >
                   <span className="text-xs font-medium text-primary-foreground">
-                    {account?.userName?.slice(0, 2)}
+                    {userImage ? (
+                      <img src={userImage} alt="" />
+                    ) : (
+                      account?.userName?.slice(0, 2)
+                    )}
                   </span>
                 </Link>
-                <Link to={"Profile/" + account?._id} className="text-sm font-medium text-foreground">
+                <Link
+                  to={"Profile/" + account?._id}
+                  className="text-sm font-medium text-foreground"
+                >
                   {account?.userName}
                 </Link>
+                <button
+                  onClick={() => {
+                    logout();
+                  }}
+                  className="text-red-600"
+                >
+                  <LuLogOut />
+                </button>
               </>
             )}
             {!auth && (
