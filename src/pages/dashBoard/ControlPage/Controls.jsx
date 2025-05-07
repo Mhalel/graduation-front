@@ -1,11 +1,9 @@
 import ContralsApi from "@/Apis/Contralls";
-import { useLang } from "@/hooks/LangContext";
 import { useSnackbar } from "@/hooks/SnackBar";
 import { useState } from "react";
 
 const Controls = () => {
   const [but, setBut] = useState(false);
-  const { lang } = useLang();
   const { openSnackbar } = useSnackbar();
 
   const handleClick = async () => {
