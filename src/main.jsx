@@ -10,6 +10,7 @@ import { PopupProvider } from "./hooks/popupContext.jsx";
 import { SnackbarProvider } from "./hooks/SnackBar.jsx";
 import { AuthProvider } from "./hooks/AuthContext.jsx";
 import { MessagesSupportProvider } from "./hooks/UseChatWithAdmin.jsx";
+import { FileProvider } from "./hooks/FileProvider.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -21,7 +22,9 @@ createRoot(document.getElementById("root")).render(
               <ThemeProvider>
                 <HelmetProvider>
                   <MessagesSupportProvider>
-                    <App />
+                    <FileProvider>
+                      <App />
+                    </FileProvider>
                   </MessagesSupportProvider>
                 </HelmetProvider>
               </ThemeProvider>

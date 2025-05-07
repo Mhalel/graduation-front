@@ -132,7 +132,7 @@ const Signup = () => {
   return (
     <div
       dir={T("rtl", "ltr")}
-      className="w-full my-10 min-h-screen flex justify-center items-center"
+      className="w-full my-10 text-black min-h-screen flex justify-center items-center"
     >
       <form
         onSubmit={handleSubmit}

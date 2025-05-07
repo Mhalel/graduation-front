@@ -29,15 +29,13 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<LandingPage />} />
           <Route path="comp" element={<EComp />} />
-
+          <Route path="Pricing" element={<PricingPage />} />
           {!auth && (
             <>
               <Route path="signin" element={<Signin />} />
               <Route path="signup" element={<Signup />} />
             </>
           )}
-          <Route path="Pricing" element={<PricingPage />} />
-
           {auth && <Route path="Profile/:id" element={<ProfilePage />} />}
         </Route>
         {auth && (
@@ -84,7 +82,7 @@ const SupportPart = () => {
                 onClick={() => {
                   setIsSupportOpen(false);
                 }}
-                className="fixed bottom-0  text-foreground rounded-full right-7  flex-col  z-50 
+                className="fixed bottom-0  text-foreground rounded-full right-7  flex-col  z-20 
             flex items-center justify-center cursor-pointer text-4xl shadow-neon-blue"
               >
                 <IoIosArrowDown />

@@ -3,7 +3,12 @@
 import { useAuth } from "@/hooks/AuthContext";
 import { usePopup } from "@/hooks/popupContext";
 import { useTheme } from "@/hooks/themeprovider";
+import { useEffect, useRef, useState } from "react";
+import { Camera } from "lucide-react";
 import { CgCloseR } from "react-icons/cg";
+import { useLang } from "@/hooks/LangContext";
+import { useFileUploader } from "@/hooks/FileProvider";
+import AuthApi from "@/Apis/Auth";
 export default function ProfilePage() {
   const { account, auth } = useAuth();
   const { popup } = usePopup();
@@ -31,6 +36,9 @@ export default function ProfilePage() {
         />
       </div>
     );
+  };
+  const handleEditProfile = () => {
+    popup.run(<ProfileEditForm />);
   };
   return (
     <div className={`min-h-screen bg-background text-foreground`}>
@@ -78,7 +86,10 @@ export default function ProfilePage() {
                     Senior Product Designer
                   </p>
                 </div>
-                <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity">
+                <button
+                  onClick={() => handleEditProfile()}
+                  className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity"
+                >
                   Edit Profile
                 </button>
               </div>
@@ -124,5 +135,263 @@ export default function ProfilePage() {
         </div>
       </footer> */}
     </div>
+  );
+}
+
+function ProfileEditForm() {
+  const { lang } = useLang();
+  const imageRef = useRef();
+  const dropRef = useRef(null);
+  const { auth } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [profile, setProfile] = useState({
+    fullName: "",
+    userName: "",
+    dateOfBirth: "",
+    password: "",
+    photoLink: "",
+    email: "",
+    phone: "",
+    gender: "",
+  });
+
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setProfile((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) convertToBase64(file);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file) convertToBase64(file);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const convertToBase64 = (file) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfile((prev) => ({
+        ...prev,
+        photoLink: reader.result,
+      }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    // console.log("Profile submitted:", profile);
+    AuthApi.edit(profile, auth)
+      .then((res) => {
+        setLoading(false);
+        console.log("res", res);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.error(err);
+      });
+  };
+
+  return (
+    <section
+      dir={lang === "ar" ? "rtl" : "ltr"}
+      className="flex justify-center items-center min-h-screen bg-background"
+    >
+      <div className="w-full max-w-2xl">
+        <div className="bg-card rounded-lg shadow-lg border border-border overflow-hidden">
+          <div className="p-6 bg-primary text-primary-foreground">
+            <h2 className="text-2xl font-bold">Edit Profile</h2>
+            <p className="text-sm opacity-80">
+              Update your personal information
+            </p>
+          </div>
+
+          <form
+            onSubmit={handleSubmit}
+            className="p-6 space-y-6"
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            ref={dropRef}
+          >
+            {/* Photo Upload */}
+            <div className="flex flex-col items-center space-y-4">
+              <div className="relative">
+                <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center overflow-hidden">
+                  {profile.photoLink ? (
+                    <img
+                      src={profile.photoLink}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="text-4xl text-muted-foreground">
+                      {profile.fullName
+                        ? profile.fullName.charAt(0).toUpperCase()
+                        : "U"}
+                    </div>
+                  )}
+                </div>
+                <input
+                  ref={imageRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => imageRef.current.click()}
+                  className="absolute bottom-0 right-0 bg-primary text-primary-foreground rounded-full p-2 shadow-md"
+                >
+                  <Camera size={16} />
+                </button>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Drag & drop an image or click the camera icon
+              </p>
+            </div>
+
+            {/* Form Fields */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">
+                  Full Name*
+                </label>
+                <input
+                  type="text"
+                  name="fullName"
+                  value={profile.fullName}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-3 py-2 bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">
+                  Username*
+                </label>
+                <input
+                  type="text"
+                  name="userName"
+                  value={profile.userName}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-3 py-2 bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={profile.email}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">
+                  Phone
+                </label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={profile.phone}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">
+                  Date of Birth
+                </label>
+                <input
+                  type="date"
+                  name="dateOfBirth"
+                  value={profile.dateOfBirth}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">
+                  Gender
+                </label>
+                <select
+                  name="gender"
+                  value={profile.gender}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
+                >
+                  <option value="">Select gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">
+                  Password*
+                </label>
+                <div className="relative">
+                  <input
+                    type={passwordVisible ? "text" : "password"}
+                    name="password"
+                    value={profile.password}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-3 py-2 bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setPasswordVisible(!passwordVisible)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+                  >
+                    {passwordVisible ? "Hide" : "Show"}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex justify-end space-x-4 pt-4 border-t border-border">
+              <button
+                type="button"
+                className="px-4 py-2 border border-border rounded-md bg-secondary text-secondary-foreground hover:bg-accent"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 rounded-md bg-primary text-primary-foreground hover:opacity-90"
+              >
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
   );
 }

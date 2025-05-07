@@ -1,21 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { Bell, Menu, X, User, LogOut, Globe, Moon, Sun } from "lucide-react";
 import { useLang, useT } from "@/hooks/LangContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "@/hooks/themeprovider";
 import { useAuth } from "@/hooks/AuthContext";
 import { LuLogOut } from "react-icons/lu";
+import Notifications from "../Notifications";
 
 const Header = () => {
   const { account, auth, logout } = useAuth();
+  const nav = useNavigate();
   const T = useT();
+  const [isNotificationOpend, setIsNotificationOpend] = useState(false);
   const { lang, setLang } = useLang();
   const { isDark, toggleTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
-
+  const toggleNotifications = () => {
+    setIsNotificationOpend(!isNotificationOpend);
+    // setUnseenCount(0);
+    // setUnseenNotifications([]);
+  };
+  useEffect(() => {
+    setIsNotificationOpend(false);
+  }, [window.location.pathname]);
   // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
@@ -160,10 +170,28 @@ const Header = () => {
                 </div>
               )}
             </div>
+
             {auth && (
               <>
-                <button className="p-2 rounded-full text-foreground hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-ring transition-colors">
+                <button
+                  onClick={() => {
+                    if (!auth) {
+                      nav("/login");
+                    } else {
+                      toggleNotifications();
+                    }
+                  }}
+                  className="relative p-2 rounded-full text-foreground hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-ring transition-colors"
+                >
                   <Bell className="h-5 w-5" />
+                  {auth && isNotificationOpend && (
+                    <div className="absolute right-0 top-[4.7rem]">
+                      <Notifications
+                        isNotificationOpend={isNotificationOpend}
+                        setIsNotificationOpend={setIsNotificationOpend}
+                      />
+                    </div>
+                  )}
                 </button>
 
                 <Link
@@ -188,7 +216,7 @@ const Header = () => {
                   onClick={() => {
                     logout();
                   }}
-                  className="text-red-600"
+                  className="text-foreground"
                 >
                   <LuLogOut />
                 </button>

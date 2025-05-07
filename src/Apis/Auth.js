@@ -10,6 +10,10 @@ const AuthApi = {
     const url = "/auth/signUp";
     return axiosClient.post(url, data);
   },
+  edit: (data, auth) => {
+    const url = "/user/edit";
+    return axiosClient.post(url, data, { headers: { auth } });
+  },
 };
 
 export default AuthApi;

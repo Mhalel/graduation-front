@@ -106,14 +106,14 @@ const ChatModal = ({
   return (
     <div className="fixed bottom-3 right-3 w-96 h-[27rem] bg-white rounded-lg shadow-lg p-4 z-50">
       <div className="w-full flex flex-row-reverse justify-between items-center">
-        <h2 className="text-lg font-semibold">
-          {mode === "admin" ? "مسؤول الدعم الفني" : "كمول الذكاء الاصطناعي"}
+        <h2 className="text-lg font-semibold text-black">
+         الذكاء الاصطناعي
         </h2>
         <button className="text-lg text-[#9da3f3]" onClick={toggleOptions}>
           <IoMdClose />
         </button>
       </div>
-      {showEnterQueue.find((item) => item.mode === mode)?.show ? (
+      {/* {showEnterQueue.find((item) => item.mode === mode)?.show ? (
         <EnterQueue
           toggleOptions={toggleOptions}
           mode={mode}
@@ -121,7 +121,10 @@ const ChatModal = ({
         />
       ) : (
         <>
-          <MessageList />
+          
+        </>
+      )} */}
+      <MessageList />
           <div className="w-full flex items-center h-10">
             <div className="flex-grow h-full">
               <div className="relative w-full h-full">
@@ -131,7 +134,7 @@ const ChatModal = ({
                   onKeyPress={handleKeyPress}
                   type="text"
                   placeholder="Type your message..."
-                  className="flex w-full border rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-full"
+                  className="flex w-full border text-black rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-full"
                 />
                 {showEmoji && (
                   <div className="absolute right-0 bottom-10 z-10">
@@ -159,8 +162,6 @@ const ChatModal = ({
               </button>
             </div>
           </div>
-        </>
-      )}
     </div>
   );
 };
