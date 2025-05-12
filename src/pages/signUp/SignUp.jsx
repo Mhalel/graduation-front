@@ -1,13 +1,16 @@
 import AuthApi from "@/Apis/Auth";
+import { useAuth } from "@/hooks/AuthContext";
 import { useT } from "@/hooks/LangContext";
 import { useSnackbar } from "@/hooks/SnackBar";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
   const T = useT();
   const [loading, setLoading] = useState(false);
+  const { updateUser, logout, setToken, setAccount, account, setAuth, auth } =
+    useAuth();
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     fullName: "",
@@ -94,40 +97,65 @@ const Signup = () => {
         "Password must be at least 6 characters"
       );
 
+    console.log("Validation errors:", newErrors);
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = useCallback((e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
-  }, []);
+  };
 
-  const handleSubmit = useCallback((e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
 
     setLoading(true);
-    AuthApi.signup(formData)
-      .then(() => {
-        openSnackbar(T("تم التسجيل بنجاح", "Signup successful"), {
-          type: "success",
-        });
-        nav("/signIn");
-      })
-      .catch((err) => {
-        openSnackbar(
-          err?.response?.data?.msg ||
-            T("حدث خطأ، حاول مرة أخرى", "An error occurred. Please try again."),
-          { type: "error" }
-        );
-      })
-      .finally(() => setLoading(false));
-  }, []);
-  useEffect(() => {
-    console.log("formData", formData);
-  }, [formData]);
+
+    try {
+      // Signup step
+      await AuthApi.signup(formData);
+      openSnackbar(T("تم التسجيل بنجاح", "Signup successful"), {
+        type: "success",
+      });
+
+      // Signin step
+      const res = await AuthApi.signIn({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      const { token, account } = res?.data || {};
+      if (token && account) {
+        setToken(token, account);
+        setAuth(token);
+        setAccount(account);
+        nav("/dashboard/charts");
+      } else {
+        throw new Error("Invalid signin response");
+      }
+    } catch (err) {
+      const res = err?.response?.data;
+      const fallback = T(
+        "حدث خطأ، حاول مرة أخرى",
+        "An error occurred. Please try again."
+      );
+
+      const msg =
+        res?.msg ||
+        (res?.errors && Object.values(res.errors).join(" - ")) ||
+        fallback;
+
+      openSnackbar(msg, { type: "error" });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div
@@ -149,7 +177,7 @@ const Signup = () => {
             {field.type === "select" ? (
               <select
                 name={field.name}
-                value={formData[field.name]}
+                value={formData[field.name] || ""}
                 onChange={handleChange}
                 className={`rounded-md border px-3 py-2 text-sm ${
                   errors[field.name] ? "border-red-500" : "border-gray-300"
@@ -169,7 +197,7 @@ const Signup = () => {
               <input
                 type={field.type}
                 name={field.name}
-                value={formData[field.name]}
+                value={formData[field.name] || ""}
                 onChange={handleChange}
                 className={`p-2 border rounded-md ${
                   errors[field.name] ? "border-red-500" : "border-gray-300"

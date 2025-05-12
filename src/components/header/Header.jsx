@@ -6,6 +6,7 @@ import { useTheme } from "@/hooks/themeprovider";
 import { useAuth } from "@/hooks/AuthContext";
 import { LuLogOut } from "react-icons/lu";
 import Notifications from "../Notifications";
+import MobilePopUp from "./components/mobilePopUp";
 
 const Header = () => {
   const { account, auth, logout } = useAuth();
@@ -71,7 +72,7 @@ const Header = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo and brand */}
           <div className="flex items-center">
-            <div className="flex-shrink-0 flex items-center mr-4">
+            <Link to={"/"} className="flex-shrink-0 flex items-center mr-4">
               <svg
                 className="h-8 w-8 text-primary"
                 viewBox="0 0 24 24"
@@ -101,26 +102,28 @@ const Header = () => {
                 />
               </svg>
               <span className="ml-2 text-primary font-bold text-xl">Nexus</span>
-            </div>
+            </Link>
 
             {/* Desktop Navigation */}
             <nav className="hidden md:block">
               <ul className="flex items-center space-x-1">
-                <li>
-                  <Link
-                    to={"/dashboard"}
-                    className="text-foreground hover:bg-accent/30 px-3 py-2 rounded-md text-sm font-medium flex items-center"
-                  >
-                    {T("", "Dashboard")}
-                  </Link>
-                </li>
+                {auth && (
+                  <li>
+                    <Link
+                      to={"/dashboard"}
+                      className="text-foreground hover:bg-accent/30 px-3 py-2 rounded-md text-sm font-medium flex items-center"
+                    >
+                      {T("لوحة التحكم", "Dashboard")}
+                    </Link>
+                  </li>
+                )}
 
                 <li>
                   <Link
                     to={"/Pricing"}
                     className="text-foreground hover:bg-accent/30 px-3 py-2 rounded-md text-sm font-medium"
                   >
-                    Pricing
+                    {T("الاسعار", "Pricing")}
                   </Link>
                 </li>
               </ul>
@@ -216,7 +219,9 @@ const Header = () => {
                   onClick={() => {
                     logout();
                   }}
-                  className="text-foreground"
+                  className={`text-foreground ${
+                    lang === "ar" ? "rotate-180" : ""
+                  }`}
                 >
                   <LuLogOut />
                 </button>
@@ -228,14 +233,14 @@ const Header = () => {
                   to={"/signIn"}
                   className="text-foreground hover:bg-accent/30 px-4 py-1.5 rounded-md font-medium text-sm transition-colors"
                 >
-                  Sign in
+                  {T("تسجيل الدخول", "Sign in")}
                 </Link>
 
                 <Link
                   to={"/Signup"}
                   className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-1.5 rounded-md font-medium text-sm transition-colors"
                 >
-                  Sign up
+                  {T("انشاء حساب", "Sign up")}
                 </Link>
               </>
             )}
@@ -272,101 +277,13 @@ const Header = () => {
 
       {/* Mobile menu - only appears on mobile */}
       {isMenuOpen && (
-        <div className="md:hidden bg-background border-t border-border shadow-lg">
-          <div className="pt-2 pb-3 space-y-1 px-4">
-            <a
-              href="#"
-              className="text-foreground hover:bg-accent/30 block px-3 py-2 rounded-md text-base font-medium"
-            >
-              Dashboard
-            </a>
-            <Link
-              to={"/Pricing"}
-              className="text-foreground hover:bg-accent/30 block px-3 py-2 rounded-md text-base font-medium"
-            >
-              Pricing
-            </Link>
-          </div>
-
-          {/* Language selector in mobile menu */}
-          <div className="px-4 py-2 border-t border-border">
-            <div className="text-sm font-medium text-muted-foreground mb-2">
-              Language
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={() => changeLanguage("en")}
-                className={`px-3 py-2 rounded-md text-sm ${
-                  lang === "en"
-                    ? "bg-accent text-foreground font-medium"
-                    : "text-foreground hover:bg-accent/30"
-                }`}
-              >
-                English
-              </button>
-            </div>
-          </div>
-
-          <div className="pt-4 pb-3 border-t border-border">
-            <div className="flex items-center px-4">
-              <div className="h-9 w-9 rounded-full bg-primary flex items-center justify-center">
-                <span className="text-sm font-medium text-primary-foreground">
-                  JD
-                </span>
-              </div>
-              <div className="ml-3">
-                <div className="text-base font-medium text-foreground">
-                  John Doe
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  john@nexus.com
-                </div>
-              </div>
-              <button className="ml-auto p-2 rounded-full text-foreground hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-ring">
-                <Bell className="h-5 w-5" />
-              </button>
-            </div>
-            <div className="mt-3 px-4 space-y-1">
-              <a
-                href="#"
-                className="flex items-center text-foreground hover:bg-accent/30 px-3 py-2 rounded-md text-base font-medium"
-              >
-                <User className="mr-3 h-5 w-5" />
-                Your Profile
-              </a>
-              <a
-                href="#"
-                className="text-foreground hover:bg-accent/30 block px-3 py-2 rounded-md text-base font-medium"
-              >
-                Account
-              </a>
-              <a
-                href="#"
-                className="text-foreground hover:bg-accent/30 block px-3 py-2 rounded-md text-base font-medium"
-              >
-                Settings
-              </a>
-              <a
-                href="#"
-                className="text-foreground hover:bg-accent/30 block px-3 py-2 rounded-md text-base font-medium"
-              >
-                Billing
-              </a>
-
-              <div className="pt-2 space-y-2">
-                <button className="w-full text-foreground bg-accent/30 hover:bg-accent/50 px-3 py-2 rounded-md font-medium text-base transition-colors">
-                  Sign in
-                </button>
-                <button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 px-3 py-2 rounded-md font-medium text-base transition-colors">
-                  Sign up
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <MobilePopUp />
       )}
     </header>
   );
 };
+
+
+
 
 export default Header;

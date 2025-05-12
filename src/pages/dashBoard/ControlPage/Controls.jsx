@@ -1,11 +1,13 @@
 import ContralsApi from "@/Apis/Contralls";
+import { useAuth } from "@/hooks/AuthContext";
 import { useSnackbar } from "@/hooks/SnackBar";
 import { useState } from "react";
 
 const Controls = () => {
   const [but, setBut] = useState(false);
   const { openSnackbar } = useSnackbar();
-
+  const { auth } = useAuth();
+  console.log("auth", auth);
   const handleClick = async () => {
     ContralsApi.Led1({
       pin: "D1",

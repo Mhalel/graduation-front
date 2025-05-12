@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { createContext, useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext();
 export const useAuth = () => {
@@ -46,7 +47,7 @@ export const removeToken = (nav = () => {}) => {
 export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState(null);
   const [account, setAccount] = useState(null);
-
+  const nav = useNavigate();
   useEffect(() => {
     const tokenData = getToken();
     if (tokenData) {
@@ -60,6 +61,7 @@ export const AuthProvider = ({ children }) => {
     removeToken();
     setAuth(null);
     setAccount(null);
+    nav("/");
   };
 
   const updateUser = (updatedUser) => {
