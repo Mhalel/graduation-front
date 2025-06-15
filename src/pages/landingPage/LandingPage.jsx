@@ -19,7 +19,7 @@ const LandingPage = () => {
   const { auth } = useAuth();
   return (
     <div className="">
-      {/* <GreenhouseScene /> */}
+      <GreenhouseScene />
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
         <section className="py-16 md:py-24">

@@ -1,3 +1,4 @@
+import GPTApis from "@/Apis/AiModels";
 import AuthApi from "@/Apis/Auth";
 import { useAuth } from "@/hooks/AuthContext";
 import { useT } from "@/hooks/LangContext";
@@ -58,6 +59,17 @@ const Signin = () => {
           openSnackbar(T("تم التسجيل بنجاح", "Singedin successfully"), {
             type: "success",
           });
+          GPTApis.GptChatHestory({ auth })
+            .then((res) => {
+              const { Hestory } = res.data;
+              const sortedMessages = Hestory.sort(
+                (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+              ).flatMap((chat) => chat.messages);
+              localStorage.setItem("GPTHestory", JSON.stringify(sortedMessages));
+            })
+            .catch((errors) => {
+              console.error(errors);
+            });
           nav("/dashboard/charts");
         })
         .catch(() => {

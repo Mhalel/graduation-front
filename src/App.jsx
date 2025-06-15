@@ -12,19 +12,19 @@ import ProfilePage from "./pages/ProfilePage/Profile";
 import { useAuth } from "./hooks/AuthContext";
 import PricingPage from "./pages/PricingPage/PricingPage";
 import ChatSupport from "./components/chatSupport/ChatSupport";
-import { useState } from "react";
+import {  useState } from "react";
 import { MdSupportAgent } from "react-icons/md";
 import { IoIosArrowDown } from "react-icons/io";
 import EComp from "./pages/EComponentsinfo/EComp";
 import Controls from "./pages/dashBoard/ControlPage/Controls";
-// import Messanger from "./pages/messenger/app";
+import Messanger from "./pages/messenger/App";
+
 function App() {
   const { auth } = useAuth();
 
-  return (
-    <div className="">
-      {/* <PageTitleUpdater /> */}
 
+  return (
+    <div>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<LandingPage />} />
@@ -44,10 +44,9 @@ function App() {
             <Route path="charts" element={<ChartPage />} />
             <Route path="account" element={<Accounts />} />
             <Route path="control" element={<Controls />} />
-            {/* <Route path="Support" element={<Messanger />} /> */}
+            <Route path="Support" element={<Messanger />} />
           </Route>
         )}
-
         <Route path="*" element={<NoPage />} />
       </Routes>
       <SupportPart />
@@ -65,11 +64,8 @@ const SupportPart = () => {
           {!isSupportOpen && (
             <button
               className="fixed bottom-10 bg-foreground text-background rounded-full right-5  flex-col space-y-2 z-50 
-        size-14 flex items-center justify-center cursor-pointer text-4xl shadow-neon-blue
-        "
-              onClick={() => {
-                setIsSupportOpen(true);
-              }}
+        size-14 flex items-center justify-center cursor-pointer text-4xl shadow-neon-blue"
+              onClick={() => setIsSupportOpen(true)}
             >
               <MdSupportAgent />
             </button>
@@ -77,12 +73,9 @@ const SupportPart = () => {
           {isSupportOpen && (
             <>
               <ChatSupport />
-
               <button
-                onClick={() => {
-                  setIsSupportOpen(false);
-                }}
-                className="fixed bottom-0  text-foreground rounded-full right-7  flex-col  z-20 
+                onClick={() => setIsSupportOpen(false)}
+                className="fixed bottom-0 text-foreground rounded-full right-7 flex-col z-20 
             flex items-center justify-center cursor-pointer text-4xl shadow-neon-blue"
               >
                 <IoIosArrowDown />

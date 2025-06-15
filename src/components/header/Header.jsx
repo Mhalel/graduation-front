@@ -213,7 +213,7 @@ const Header = () => {
                   to={"Profile/" + account?._id}
                   className="text-sm font-medium text-foreground"
                 >
-                  {account?.userName}
+                  {/* {account?.userName} */}
                 </Link>
                 <button
                   onClick={() => {

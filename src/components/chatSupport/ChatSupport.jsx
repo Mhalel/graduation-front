@@ -27,7 +27,7 @@ function ChatSupport() {
   ]);
 
   const { lang } = useLang();
-  const { auth, socket } = useAuth();
+  const { auth } = useAuth();
 
   const toggleOptions = () => setIsOpen(!isOpen);
 
@@ -40,7 +40,6 @@ function ChatSupport() {
     setIsOpen(false);
     setIsChatOpen(false);
   };
-  let message = "Hi! I have a question about your services.";
 
   return (
     <div>

@@ -52,6 +52,7 @@ export const AuthProvider = ({ children }) => {
     const tokenData = getToken();
     if (tokenData) {
       const { token, account } = tokenData;
+      console.log("token",token)
       setAuth(token);
       setAccount(JSON.parse(account));
     }
