@@ -11,26 +11,29 @@ import { SnackbarProvider } from "./hooks/SnackBar.jsx";
 import { AuthProvider } from "./hooks/AuthContext.jsx";
 import { MessagesSupportProvider } from "./hooks/UseChatWithAdmin.jsx";
 import { FileProvider } from "./hooks/FileProvider.jsx";
+import { SocketProvider } from "./hooks/SensorReadings.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Router>
       <LangProvider>
-        <AuthProvider>
-          <SnackbarProvider>
-            <PopupProvider>
-              <ThemeProvider>
-                <HelmetProvider>
-                  <MessagesSupportProvider>
-                    <FileProvider>
-                      <App />
-                    </FileProvider>
-                  </MessagesSupportProvider>
-                </HelmetProvider>
-              </ThemeProvider>
-            </PopupProvider>
-          </SnackbarProvider>
-        </AuthProvider>
+        <SocketProvider>
+          <AuthProvider>
+            <SnackbarProvider>
+              <PopupProvider>
+                <ThemeProvider>
+                  <HelmetProvider>
+                    <MessagesSupportProvider>
+                      <FileProvider>
+                        <App />
+                      </FileProvider>
+                    </MessagesSupportProvider>
+                  </HelmetProvider>
+                </ThemeProvider>
+              </PopupProvider>
+            </SnackbarProvider>
+          </AuthProvider>
+        </SocketProvider>
       </LangProvider>
     </Router>
   </StrictMode>

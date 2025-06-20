@@ -4,6 +4,7 @@
 
 @layer base {
   :root {
+    /* Default (light mode) */
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
     --card: 0 0% 100%;
@@ -28,8 +29,7 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.5rem
-  ;
+    --radius: 0.5rem;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -37,8 +37,11 @@
     --sidebar-accent: 240 4.8% 95.9%;
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%}
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
   .dark {
+    /* Dark mode */
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
     --card: 0 0% 3.9%;
@@ -62,8 +65,7 @@
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%
-  ;
+    --chart-5: 340 75% 55%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -71,7 +73,45 @@
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%}
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .greenhouse {
+    /* Greenhouse theme */
+    --background: 120 40% 94%;
+    --foreground: 120 20% 20%;
+    --card: 120 30% 98%;
+    --card-foreground: 120 20% 15%;
+    --popover: 120 30% 95%;
+    --popover-foreground: 120 20% 20%;
+    --primary: 120 45% 35%;
+    --primary-foreground: 120 30% 95%;
+    --secondary: 100 30% 85%;
+    --secondary-foreground: 120 20% 25%;
+    --muted: 120 20% 85%;
+    --muted-foreground: 120 10% 35%;
+    --accent: 140 30% 70%;
+    --accent-foreground: 120 30% 20%;
+    --destructive: 0 65% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 120 20% 80%;
+    --input: 120 25% 85%;
+    --ring: 120 30% 40%;
+    --chart-1: 120 60% 35%;
+    --chart-2: 100 50% 40%;
+    --chart-3: 140 50% 45%;
+    --chart-4: 90 40% 50%;
+    --chart-5: 110 60% 35%;
+    --radius: 0.5rem;
+    --sidebar-background: 120 30% 90%;
+    --sidebar-foreground: 120 20% 20%;
+    --sidebar-primary: 120 45% 35%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 120 30% 70%;
+    --sidebar-accent-foreground: 120 20% 15%;
+    --sidebar-border: 120 20% 80%;
+    --sidebar-ring: 120 60% 40%;
+  }
 }
 
 @layer base {
@@ -83,12 +123,10 @@
   }
 }
 
-
 .sidebar-left {
   left: 0;
   right: auto;
 }
-
 .sidebar-right {
   right: 0;
   left: auto;

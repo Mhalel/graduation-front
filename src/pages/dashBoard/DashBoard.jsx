@@ -37,65 +37,70 @@ export default function DashBoard() {
     { nameAr: "إنجليزي", nameEn: "English", val: "en" },
   ];
   return (
-   <SidebarProvider >
-  <AppSidebar className={lang === "ar" ? "sidebar-right" : "sidebar-left"} />
-  <SidebarInset>
-    <header className="flex  h-16 shrink-0 items-center border-y gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-      <div className="flex items-center gap-2 px-4">
-        <SidebarTrigger className="-ml-1" />
-        <Separator orientation="vertical" className="mr-2 h-4" />
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem className="hidden md:block">
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded-full text-foreground hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-ring transition-colors"
-                aria-label="Toggle theme"
-              >
-                {isDark ? (
-                  <Sun className="h-5 w-5" />
-                ) : (
-                  <Moon className="h-5 w-5" />
-                )}
-              </button>
-            </BreadcrumbItem>
-            <BreadcrumbItem>
-              <div className="relative">
-                <button
-                  onClick={toggleLanguageMenu}
-                  className="flex items-center space-x-1 text-foreground hover:bg-accent/30 px-2 py-1.5 rounded-md focus:outline-none focus:ring-2 focus:ring-ring transition-colors"
-                >
-                  <Globe className="h-4 w-4" />
-                  <span className="text-sm font-medium">{lang}</span>
-                </button>
+    <SidebarProvider>
+      <AppSidebar
+        className={lang === "ar" ? "sidebar-right" : "sidebar-left"}
+      />
+      <SidebarInset>
+        <header className="flex  h-16 shrink-0 items-center border-y gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+          <div className="flex items-center gap-2 px-4">
+            <SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="mr-2 h-4" />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem className="hidden md:block">
+                  <button
+                    onClick={toggleTheme}
+                    className={`p-3 rounded-lg border transition-all duration-200 ${
+                      isDark
+                        ? "border-gray-700 bg-gray-800 hover:bg-gray-700 text-yellow-400"
+                        : "border-gray-300 bg-white hover:bg-gray-50 text-gray-600"
+                    }`}
+                  >
+                    {isDark ? (
+                      <Sun className="w-6 h-6" />
+                    ) : (
+                      <Moon className="w-6 h-6" />
+                    )}
+                  </button>
+                </BreadcrumbItem>
+                <BreadcrumbItem>
+                  <div className="relative">
+                    <button
+                      onClick={toggleLanguageMenu}
+                      className="flex items-center space-x-1 text-foreground hover:bg-accent/30 px-2 py-1.5 rounded-md focus:outline-none focus:ring-2 focus:ring-ring transition-colors"
+                    >
+                      <Globe className="h-4 w-4" />
+                      <span className="text-sm font-medium">{lang}</span>
+                    </button>
 
-                {isLanguageMenuOpen && (
-                  <div className="absolute right-0 mt-1 w-24 bg-card rounded-md shadow-lg py-1 border border-border z-10">
-                    {langsType.map(({ nameAr, nameEn, val }, i) => (
-                      <button
-                        key={nameEn + i}
-                        onClick={() => changeLanguage(val)}
-                        className={`w-full  px-3 text-center py-1.5 text-sm ${
-                          lang === "en"
-                            ? "text-primary font-medium"
-                            : "text-card-foreground"
-                        } hover:bg-accent`}
-                      >
-                        {lang === "en" ? nameEn : nameAr}
-                      </button>
-                    ))}
+                    {isLanguageMenuOpen && (
+                      <div className="absolute right-0 mt-1 w-24 bg-card rounded-md shadow-lg py-1 border border-border z-10">
+                        {langsType.map(({ nameAr, nameEn, val }, i) => (
+                          <button
+                            key={nameEn + i}
+                            onClick={() => changeLanguage(val)}
+                            className={`w-full  px-3 text-center py-1.5 text-sm ${
+                              lang === "en"
+                                ? "text-primary font-medium"
+                                : "text-card-foreground"
+                            } hover:bg-accent`}
+                          >
+                            {lang === "en" ? nameEn : nameAr}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      </div>
-    </header>
-    <main>
-      <Outlet />
-    </main>
-  </SidebarInset>
-</SidebarProvider>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+        </header>
+        <main>
+          <Outlet />
+        </main>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

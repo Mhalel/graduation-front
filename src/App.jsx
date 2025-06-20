@@ -12,17 +12,72 @@ import ProfilePage from "./pages/ProfilePage/Profile";
 import { useAuth } from "./hooks/AuthContext";
 import PricingPage from "./pages/PricingPage/PricingPage";
 import ChatSupport from "./components/chatSupport/ChatSupport";
-import {  useState } from "react";
+import { useEffect, useState } from "react";
 import { MdSupportAgent } from "react-icons/md";
 import { IoIosArrowDown } from "react-icons/io";
 import EComp from "./pages/EComponentsinfo/EComp";
 import Controls from "./pages/dashBoard/ControlPage/Controls";
 import Messanger from "./pages/messenger/App";
+import Numbers from "./pages/dashBoard/numbersPage/Numbers";
+import { useSocket } from "./hooks/SensorReadings";
+import axios from "axios";
+import LongTermCharts from "./pages/dashBoard/LongTermCharts/LongTermCharts";
 
 function App() {
   const { auth } = useAuth();
+  const { realTimeReading, readings, socket } = useSocket();
+  const randBool = () => Math.random() > 0.5;
 
+  // Random number from 0 to 100
+  const randValue = () => Math.floor(Math.random() * 101);
 
+  // Generate random sensor data
+  const generateRandomData = () => {
+    return {
+      autoState: randBool(),
+      dhFanState: randBool(),
+      ccFanState: randBool(),
+      acFanState: randBool(),
+      pumpState: randBool(),
+      ledState: randBool(),
+      lux: randValue(),
+      luxGoal: randValue(),
+      eTemp: randValue().toString(),
+      humidity: randValue().toString(),
+      pressure: randValue().toFixed(2),
+      cTemp: randValue().toString(),
+      s1Temp: randValue().toString(),
+      s2Temp: randValue().toString(),
+      s1Moisture: randValue().toString(),
+      s2Moisture: randValue().toString(),
+    };
+  };
+
+  // Send randomized data
+  const ranmizeData = async () => {
+    const data = generateRandomData();
+    try {
+      const res = await axios.post(
+        // "http://grad-back-production.up.railway.app/api/v1/readings/readings",
+        "http://localhost:7000/api/v1/readings/readings",
+        data
+      );
+      console.log("✅ Sent at", new Date().toLocaleTimeString(), data);
+    } catch (err) {
+      console.error("❌ Failed to send data:", err.message);
+    }
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      ranmizeData();
+    }, 60 * 100); // كل دقيقة
+
+    return () => clearInterval(interval); // تنظيف عند إزالة المكون
+  }, []);
+  // useEffect(() => {
+  //   console.log("realTimeReading", realTimeReading);
+  // }, [realTimeReading]);
   return (
     <div>
       <Routes>
@@ -40,8 +95,10 @@ function App() {
         </Route>
         {auth && (
           <Route path="/dashboard" element={<DashBoard />}>
-            <Route index element={<Navigate to="charts" />} />
+            <Route index element={<Navigate to="numbers" />} />
+            <Route path="numbers" element={<Numbers />} />
             <Route path="charts" element={<ChartPage />} />
+            <Route path="long-term-charts" element={<LongTermCharts />} />
             <Route path="account" element={<Accounts />} />
             <Route path="control" element={<Controls />} />
             <Route path="Support" element={<Messanger />} />

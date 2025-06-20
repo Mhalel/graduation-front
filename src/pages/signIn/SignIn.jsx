@@ -1,5 +1,6 @@
 import GPTApis from "@/Apis/AiModels";
 import AuthApi from "@/Apis/Auth";
+import Readings from "@/Apis/GreenHouseRequsts";
 import { useAuth } from "@/hooks/AuthContext";
 import { useT } from "@/hooks/LangContext";
 import { useSnackbar } from "@/hooks/SnackBar";
@@ -59,17 +60,33 @@ const Signin = () => {
           openSnackbar(T("تم التسجيل بنجاح", "Singedin successfully"), {
             type: "success",
           });
+          Readings.getRead(500)
+            .then((res) => {
+              console.log("res", res);
+              const sensor_readings = res.data;
+              localStorage.setItem(
+                "sensor_readings",
+                JSON.stringify(sensor_readings)
+              );
+            })
+            .catch((err) => {
+              console.error(err);
+            });
           GPTApis.GptChatHestory({ auth })
             .then((res) => {
               const { Hestory } = res.data;
               const sortedMessages = Hestory.sort(
                 (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
               ).flatMap((chat) => chat.messages);
-              localStorage.setItem("GPTHestory", JSON.stringify(sortedMessages));
+              localStorage.setItem(
+                "GPTHestory",
+                JSON.stringify(sortedMessages)
+              );
             })
             .catch((errors) => {
               console.error(errors);
             });
+
           nav("/dashboard/charts");
         })
         .catch(() => {

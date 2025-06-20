@@ -41,6 +41,8 @@ export const removeToken = (nav = () => {}) => {
   localStorage.removeItem("authToken");
   localStorage.removeItem("account");
   localStorage.removeItem("tokenExpiration");
+  localStorage.removeItem("sensor_readings");
+  localStorage.removeItem("GPTHestory");
   nav("/");
 };
 

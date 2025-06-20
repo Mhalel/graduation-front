@@ -3,271 +3,235 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { format, formatDistanceToNow, parseISO } from "date-fns";
 import { ar, enUS } from "date-fns/locale";
 import {
-	CircleCheckBig,
-	Dot,
-	Plus,
-	Send,
-	FileText,
-	FilePlus,
-	CheckCircle,
-	XCircle,
-	Eye,
-	Zap,
-	CircleUser,
+  CircleCheckBig,
+  Dot,
+  Plus,
+  Send,
+  FileText,
+  FilePlus,
+  CheckCircle,
+  XCircle,
+  Eye,
+  Zap,
+  CircleUser,
+  MapPin,
+  Droplet,
+  Sun,
+  AlertCircle,
+  Leaf,
 } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
-import { useAuth } from "../hooks/AuthContext";
 import { useLang } from "../hooks/LangContext";
-// import NotificationApi from "@/Api/NotificationApi";
+import { useSocket } from "@/hooks/SensorReadings";
 
-function Notifications({ setIsNotificationOpend }) {
-	const { lang } = useLang();
-	const notificationsWrapper = useRef(null);
-	const { auth } = useAuth();
-	const [data, setData] = useState([]);
-	const [loading, setLoading] = useState(false);
-	const [currentPage, setCurrentPage] = useState(1);
-	const [totalPages, setTotalPages] = useState(1);
-	const [isLoadingMore, setIsLoadingMore] = useState(false);
-	const [noMoreData, setNoMoreData] = useState(false);
-	const location = useLocation();
-	const limit = 6;
+// Skeleton loader component
+const SkeletonLoader = () => (
+  <div className="flex w-full flex-col items-center justify-start gap-y-3 px-1 py-2">
+    {[...Array(3)].map((_, index) => (
+      <div
+        key={index}
+        className="flex w-full animate-pulse flex-col gap-2 rounded-md bg-slate-100 p-2"
+      >
+        <div className="flex items-center gap-3">
+          <div className="h-5 w-5 rounded-full bg-gray-300"></div>
+          <div className="h-4 w-2/3 rounded bg-gray-300"></div>
+        </div>
+        <div className="h-3 w-full rounded bg-gray-200"></div>
+        <div className="h-3 w-3/4 rounded bg-gray-200"></div>
+      </div>
+    ))}
+  </div>
+);
 
-	// // Initial data fetch
-	// useEffect(() => {
-	// 	const fetchInitialData = async () => {
-	// 		setLoading(true);
-	// 		try {
-	// 			const res = await NotificationApi.getNotifications(auth, 1, limit);
-	// 			setData(res.data.data);
-	// 			console.log("🚀 ~ fetchInitialData ~ res.data.data:", res.data.data)
-	// 			setTotalPages(res.data.totalPages);
-	// 			setCurrentPage(1);
-	// 			if (res.data.totalPages <= 1) {
-	// 				setNoMoreData(true);
-	// 			}
-	// 		} catch (error) {
-	// 			console.error("Error fetching notifications:", error);
-	// 		} finally {
-	// 			setLoading(false);
-	// 		}
+// Determine icon name based on alert type
+const getWarningIconName = (type) => {
+  if (type.includes("حرارة المعالج") || type.includes("Processor temperature"))
+    return "zap";
+  if (
+    type.includes("رطوبة") &&
+    (type.includes("منخفضة") || type.includes("مرتفعة"))
+  )
+    return "droplet";
+  if (type.includes("الإضاءة") || type.includes("light")) return "sun";
+  if (
+    type.includes("حرارة التربة 1") ||
+    type.includes("حرارة التربة 2") ||
+    type.includes("Soil 1 temperature") ||
+    type.includes("Soil 2 temperature")
+  )
+    return "leaf";
+  return "alert-circle";
+};
 
-	// 	};
+// Determine icon color based on icon name
+const getIconColor = (iconName) => {
+  switch (iconName) {
+    case "zap":
+      return "#ef4444"; // أحمر - حرارة
+    case "droplet":
+      return "#3b82f6"; // أزرق - رطوبة
+    case "sun":
+      return "#f59e0b"; // برتقالي - إضاءة
+    case "leaf":
+      return "#10b981"; // أخضر - تربة
+    case "alert-circle":
+    default:
+      return "#6b7280"; // رمادي - تحذير عام
+  }
+};
 
-	// 	fetchInitialData();
-	// }, [auth]);
+// Icon component
+const DynamicIcon = ({ iconName, size, color }) => {
+  switch (iconName) {
+    case "plus":
+      return <Plus size={size || 16} color={color} />;
+    case "dot":
+      return <Dot size={size || 16} color={color} />;
+    case "circle-check-big":
+      return <CircleCheckBig size={size || 16} color={color} />;
+    case "send":
+      return <Send size={size || 16} color={color} />;
+    case "file-plus":
+      return <FilePlus size={size || 16} color={color} />;
+    case "file-text":
+      return <FileText size={size || 16} color={color} />;
+    case "circle-check":
+      return <CheckCircle size={size || 16} color={color} />;
+    case "x-circle":
+      return <XCircle size={size || 16} color={color} />;
+    case "eye":
+      return <Eye size={size || 16} color={color} />;
+    case "zap":
+      return <Zap size={size || 16} color={color} />;
+    case "circle-user":
+      return <CircleUser size={size || 16} color={color} />;
+    case "developer-land":
+      return <MapPin size={size || 16} color={color} />;
+    case "droplet":
+      return <Droplet size={size || 16} color={color} />;
+    case "sun":
+      return <Sun size={size || 16} color={color} />;
+    case "alert-circle":
+      return <AlertCircle size={size || 16} color={color} />;
+    case "leaf":
+      return <Leaf size={size || 16} color={color} />;
+    default:
+      return <Dot size={size || 16} color={color} />;
+  }
+};
 
-	// Scroll handler
-	// const handleScroll = useCallback(async () => {
-	// 	if (!notificationsWrapper.current || isLoadingMore || currentPage >= totalPages) return;
+// Format date nicely
+const formatDate = (dateString, lang) => {
+  const date = parseISO(dateString);
+  const now = new Date();
+  const diffHours = (now - date) / (1000 * 60 * 60);
+  const locale = lang === "ar" ? ar : enUS;
+  return diffHours < 48
+    ? formatDistanceToNow(date, { addSuffix: true, locale })
+    : format(date, "yyyy-MM-dd HH:mm", { locale });
+};
 
-	// 	const { scrollTop, scrollHeight, clientHeight } = notificationsWrapper.current;
-	// 	const scrollThreshold = 50; // pixels from bottom
+export default function WarningsList() {
+  const { lang } = useLang();
+  const { worning } = useSocket();
+  const containerRef = useRef(null);
+  const [visibleWarnings, setVisibleWarnings] = useState([]);
+  const [index, setIndex] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const PAGE_SIZE = 50;
 
-	// 	if (scrollHeight - (scrollTop + clientHeight) < scrollThreshold) {
-	// 		if (isLoadingMore || currentPage >= totalPages) return;
+  // أول تحميل
+  useEffect(() => {
+    if (worning.length > 0) {
+      setVisibleWarnings(worning.slice(-PAGE_SIZE));
+      setIndex(1);
+      setIsInitialLoad(true);
+    }
+  }, [worning]);
 
-	// 		setIsLoadingMore(true);
-	// 		try {
-	// 			const nextPage = currentPage + 1;
-	// 			const res = await NotificationApi.getNotifications(auth, nextPage, limit);
+  // scroll لأسفل فقط أول مرة
+  useEffect(() => {
+    if (containerRef.current && isInitialLoad) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+      setIsInitialLoad(false);
+    }
+  }, [visibleWarnings, isInitialLoad]);
 
-	// 			// Only append new data if we got some
-	// 			if (res.data.data.length > 0) {
-	// 				setData((prevData) => [...prevData, ...res.data.data]);
-	// 				setCurrentPage(nextPage);
-	// 				setTotalPages(res.data.totalPages);
-	// 				if (nextPage >= res.data.totalPages) {
-	// 					setNoMoreData(true);
-	// 				}
-	// 			}
-	// 		} catch (error) {
-	// 			console.error("Error loading more notifications:", error);
-	// 		} finally {
-	// 			setIsLoadingMore(false);
-	// 		}
-	// 	}
-	// }, [isLoadingMore, currentPage, totalPages]);
+  // تحميل تحذيرات أقدم عند السحب لأعلى
+  const handleScroll = useCallback(() => {
+    if (!containerRef.current) return;
+    const { scrollTop } = containerRef.current;
+    if (scrollTop < 100 && worning.length > PAGE_SIZE * index && !isLoading) {
+      setIsLoading(true);
+      const nextIndex = index + 1;
+      setTimeout(() => {
+        const newItems = worning.slice(-(PAGE_SIZE * nextIndex));
+        setVisibleWarnings(newItems);
+        setIndex(nextIndex);
+        setIsLoading(false);
+      }, 600); // تأخير بسيط لمحاكاة التحميل
+    }
+  }, [index, worning, isLoading]);
 
-	// Add scroll listener
-	// useEffect(() => {
-	// 	const wrapper = notificationsWrapper.current;
-	// 	if (wrapper) {
-	// 		wrapper.addEventListener("scroll", handleScroll);
-	// 		return () => wrapper.removeEventListener("scroll", handleScroll);
-	// 	}
-	// }, [handleScroll]);
+  useEffect(() => {
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener("scroll", handleScroll);
+      return () => container.removeEventListener("scroll", handleScroll);
+    }
+  }, [handleScroll]);
 
-	// Click outside handler
-	useEffect(() => {
-		const handleClickOutside = (event) => {
-			if (notificationsWrapper.current && !notificationsWrapper.current.contains(event.target)) {
-				setIsNotificationOpend(false);
-			}
-		};
+  return (
+    <div
+      ref={containerRef}
+      dir={lang === "ar" ? "rtl" : "ltr"}
+      className="flex h-[60vh] w-[500px] flex-col gap-2 overflow-y-auto rounded-xl bg-white p-3 shadow-2xl"
+    >
+      <h2 className="text-xl font-bold text-[#9a9dfe]">
+        {lang === "ar" ? "التحذيرات" : "Warnings"}
+      </h2>
 
-		document.addEventListener("mousedown", handleClickOutside);
-		return () => document.removeEventListener("mousedown", handleClickOutside);
-	}, [setIsNotificationOpend]);
+      {isLoading && <SkeletonLoader />}
 
-	const getNotificationColor = (type, read) => {
-		if (read) return "#9a9dfe";
-
-		switch (type) {
-			case "consultation":
-				return "#3034a1";
-			case "approval":
-				return "#22c55e";
-			case "rejection":
-				return "#ef4444";
-			default:
-				return "#3034a1";
-		}
-	};
-
-	const DynamicIcon = ({ iconName, size, color }) => {
-		switch (iconName) {
-			case "plus":
-				return <Plus size={size || 16} color={color} />;
-			case "dot":
-				return <Dot size={size || 16} color={color} />;
-			case "circle-check-big":
-				return <CircleCheckBig size={size || 16} color={color} />;
-			case "send":
-				return <Send size={size || 16} color={color} />;
-			case "file-plus":
-				return <FilePlus size={size || 16} color={color} />;
-			case "file-text":
-				return <FileText size={size || 16} color={color} />;
-			case "circle-check":
-				return <CheckCircle size={size || 16} color={color} />;
-			case "x-circle":
-				return <XCircle size={size || 16} color={color} />;
-			case "eye":
-				return <Eye size={size || 16} color={color} />;
-			case "zap":
-				return <Zap size={size || 16} color={color} />;
-			case "circle-user":
-				return <CircleUser size={size || 16} color={color} />;
-			default:
-				return <Dot size={size || 16} color={color} />;
-		}
-	};
-
-	const SkeletonLoader = () => (
-		<div className="flex w-full flex-col items-center justify-start gap-y-3">
-			{[...Array(3)].map((_, index) => (
-				<div
-					key={index}
-					className="flex w-full animate-pulse items-center justify-between gap-7 rounded-md bg-slate-100 p-2"
-				>
-					<div className="h-4 w-3/4 rounded bg-gray-300"></div>
-					<div className="h-4 w-1/4 rounded bg-gray-300"></div>
-				</div>
-			))}
-		</div>
-	);
-
-	const formatDate = (dateString) => {
-		const date = parseISO(dateString);
-		const now = new Date();
-		const differenceInHours = (now - date) / (1000 * 60 * 60);
-		const locale = lang === "ar" ? ar : enUS;
-
-		if (differenceInHours < 48) {
-			return formatDistanceToNow(date, { addSuffix: true, locale });
-		} else {
-			return format(date, "yyyy-MM-dd HH:mm", { locale });
-		}
-	};
-
-	// const markAsRead = async (id) => {
-	// 	try {
-	// 		await NotificationApi.markAsRead(id, auth);
-	// 		setData((prevData) =>
-	// 			prevData.map((notification) =>
-	// 				notification._id === id ? { ...notification, read: true } : notification,
-	// 			),
-	// 		);
-	// 	} catch (error) {
-	// 		console.error("Error marking notification as read:", error);
-	// 	}
-	// };
-
-	return (
-		<div
-			ref={notificationsWrapper}
-			dir={lang === "ar" ? "rtl" : "ltr"}
-			style={
-				location.pathname.includes("/admin")
-					?
-					lang === "ar" ? { left: "2.5rem" } : { right: "2.5rem" }
-
-					: lang === "ar"
-						? { left: "2.5rem" }
-						: { left: "2.5rem" }
-			}
-			className="flex h-[60vh] w-[550px] flex-col items-start justify-start gap-2 overflow-y-auto rounded-xl bg-white p-3 shadow-2xl"
-		>
-			<span className="text-xl font-bold text-[#9a9dfe]">
-				{lang === "ar" ? "الإشعارات" : "Notifications"}
-			</span>
-			<div className="flex h-full w-full flex-col items-center justify-start gap-y-3">
-				{loading ? (
-					<SkeletonLoader />
-				) : data?.length === 0 ? (
-					<div className="flex h-full w-full items-center justify-center text">
-						<h1 className="text-2xl capitalize text-[#09090B]">
-							{lang !== "ar" ? "there is no new notifications" : "لا يوجد اشعارات جديدة"}
-						</h1>
-					</div>
-				) : (
-					<>
-						{data?.map((notification) => (
-							<Link
-								dir={lang === "ar" ? "rtl" : "ltr"}
-								key={notification._id}
-								// onClick={() => markAsRead(notification._id)}
-								className={`flex w-full items-start justify-between gap-7 rounded-md p-2 ${notification.read ? "bg-slate-100" : "bg-slate-50 shadow-md"}`}
-								to={notification.actionLink || ""}
-							>
-								<div
-									dir={lang === "ar" ? "rtl" : "ltr"}
-									style={notification.read ? {} : { color: "#3034a1" }}
-									className="flex w-full flex-col items-start justify-between gap-y-3"
-								>
-									<span>{lang === "ar" ? notification.content.ar : notification.content.en}</span>
-									<span className="flex items-center justify-center gap-2 text-sm text-gray-500">
-										{formatDate(notification.createdAt)}
-										{!notification.read && (
-											<Dot size={24} color={getNotificationColor(notification.type, false)} />
-										)}
-									</span>
-								</div>
-								<span title={notification.type} className="self-center">
-									{notification.icon && (
-										<DynamicIcon
-											size={28}
-											color={getNotificationColor(notification.type, notification.read)}
-											iconName={notification.icon}
-										/>
-									)}
-								</span>
-							</Link>
-						))}
-						{isLoadingMore && <SkeletonLoader />}
-						{noMoreData && (
-							<div className="flex h-full w-full items-center justify-center">
-								<h1 className="my-2 text-2xl capitalize">
-									{lang !== "ar" ? "No more notifications" : "لا يوجد المزيد من الإشعارات"}
-								</h1>
-							</div>
-						)}
-					</>
-				)}
-			</div>
-		</div>
-	);
+      {visibleWarnings.length === 0 && !isLoading ? (
+        <p className="mt-4 text-gray-500">
+          {lang === "ar" ? "لا يوجد تحذيرات حالياً" : "No warnings currently"}
+        </p>
+      ) : (
+        visibleWarnings.map((alert, i) => {
+          const iconName = getWarningIconName(alert.type);
+          const iconColor = getIconColor(iconName);
+          return (
+            <div
+              dir={lang === "ar" ? "rtl" : "ltr"}
+              key={i}
+              className="flex bg-gray-100 p-2 flex-col gap-1"
+            >
+              <section className="flex w-full items-center  gap-2">
+                <p className="font-semibold text-gray-800">{alert.type}</p>
+                <DynamicIcon iconName={iconName} size={20} color={iconColor} />
+              </section>
+              <p
+                dir={lang === "ar" ? "ltr" : "rtl"}
+                className="text-sm text-gray-600"
+              >
+                {alert.message}
+              </p>
+              <p
+                dir={lang === "ar" ? "ltr" : "rtl"}
+                className="text-sm text-gray-500"
+              >
+                {alert.suggestion}
+              </p>
+              {alert.createdAt && (
+                <p className="text-xs text-gray-400">
+                  {formatDate(alert.createdAt, lang)}
+                </p>
+              )}
+            </div>
+          );
+        })
+      )}
+    </div>
+  );
 }
-
-export default Notifications;

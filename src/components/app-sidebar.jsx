@@ -1,8 +1,8 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
+import { Calendar, ChartPie, Home, Inbox, Search, Settings } from "lucide-react";
 import { BsFillCalculatorFill } from "react-icons/bs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { FaChartArea } from "react-icons/fa6";
-import { MdSupportAgent } from "react-icons/md";
+import { MdNumbers, MdSupportAgent } from "react-icons/md";
 import {
   Sidebar,
   SidebarContent,
@@ -21,8 +21,18 @@ import { IoGameController } from "react-icons/io5";
 // Menu items.
 const items = [
   {
-    title: { ar: "الرسمات البيانيه", en: "Charts" },
+    title: { ar: "قراءات في نفس الوقت ", en: "Real-time readings" },
+    url: "numbers",
+    icon: MdNumbers,
+  },
+  {
+    title: { ar: "الرسمات البيانيه في الوقت الفعلي ", en: "Real-time Charts" },
     url: "charts",
+    icon: ChartPie ,
+  },
+  {
+    title: { ar: "الرسمات البيانيه التراكميه ", en: "Long-term Charts" },
+    url: "long-term-charts",
     icon: FaChartArea,
   },
   {
@@ -38,7 +48,7 @@ const items = [
   {
     title: { ar: "التحكم", en: "Control" },
     url: "control",
-    icon: IoGameController ,
+    icon: IoGameController,
   },
   {
     title: "Settings",
@@ -56,7 +66,10 @@ export function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="flex items-center gap-5">
-            <Link to={`/Profile/${account?._id}`} className="flex items-center gap-5">
+            <Link
+              to={`/Profile/${account?._id}`}
+              className="flex items-center gap-5"
+            >
               <Avatar>
                 <AvatarImage
                   src={
