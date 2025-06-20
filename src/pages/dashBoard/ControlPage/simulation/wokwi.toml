@@ -1,0 +1,15 @@
+# wokwi.toml
+[project]
+name = "ESP32 HTTP IoT Server"
+author = "Your Name"
+
+[wokwi]
+# تحديد المحاكي الخاص بـ Wokwi
+board = "esp32:esp32:esp32-devkitc"
+
+# تحديد مسار firmware و ELF كـ strings
+firmware = "./path/to/your/firmware.bin"
+elf = "./path/to/your/firmware.elf"
+
+[simulator]
+speed = 1

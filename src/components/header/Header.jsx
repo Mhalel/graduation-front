@@ -1,17 +1,32 @@
 import React, { useState, useEffect } from "react";
 import { Bell, Menu, X, User, LogOut, Globe, Moon, Sun } from "lucide-react";
-import { T, useLang } from "@/hooks/LangContext";
-import { Link } from "react-router-dom";
+import { useLang, useT } from "@/hooks/LangContext";
+import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "@/hooks/themeprovider";
+import { useAuth } from "@/hooks/AuthContext";
+import { LuLogOut } from "react-icons/lu";
+import Notifications from "../Notifications";
+import MobilePopUp from "./components/mobilePopUp";
 
 const Header = () => {
+  const { account, auth, logout } = useAuth();
+  const nav = useNavigate();
+  const T = useT();
+  const [isNotificationOpend, setIsNotificationOpend] = useState(false);
   const { lang, setLang } = useLang();
   const { isDark, toggleTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
-
+  const toggleNotifications = () => {
+    setIsNotificationOpend(!isNotificationOpend);
+    // setUnseenCount(0);
+    // setUnseenNotifications([]);
+  };
+  useEffect(() => {
+    setIsNotificationOpend(false);
+  }, [window.location.pathname]);
   // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
@@ -43,6 +58,7 @@ const Header = () => {
     { nameAr: "عربي", nameEn: "Arabic", val: "ar" },
     { nameAr: "إنجليزي", nameEn: "English", val: "en" },
   ];
+  const userImage = "/Ahmed.jpg";
   return (
     <header
       dir={lang === "en" ? "ltr" : "rtl"}
@@ -56,7 +72,7 @@ const Header = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo and brand */}
           <div className="flex items-center">
-            <div className="flex-shrink-0 flex items-center mr-4">
+            <Link to={"/"} className="flex-shrink-0 flex items-center mr-4">
               <svg
                 className="h-8 w-8 text-primary"
                 viewBox="0 0 24 24"
@@ -86,51 +102,29 @@ const Header = () => {
                 />
               </svg>
               <span className="ml-2 text-primary font-bold text-xl">Nexus</span>
-            </div>
+            </Link>
 
             {/* Desktop Navigation */}
             <nav className="hidden md:block">
               <ul className="flex items-center space-x-1">
-                <li>
-                  <a
-                    href="#"
-                    className="text-foreground hover:bg-accent/30 px-3 py-2 rounded-md text-sm font-medium flex items-center"
-                  >
-                    {T("", "Dashboard")}
-                  </a>
-                </li>
+                {auth && (
+                  <li>
+                    <Link
+                      to={"/dashboard"}
+                      className="text-foreground hover:bg-accent/30 px-3 py-2 rounded-md text-sm font-medium flex items-center"
+                    >
+                      {T("لوحة التحكم", "Dashboard")}
+                    </Link>
+                  </li>
+                )}
+
                 <li>
                   <Link
-                    to="#"
-                    className="text-foreground hover:bg-accent/30 px-3 py-2 rounded-md text-sm font-medium flex items-center"
+                    to={"/Pricing"}
+                    className="text-foreground hover:bg-accent/30 px-3 py-2 rounded-md text-sm font-medium"
                   >
-                    {T("","")}
-                    Products
+                    {T("الاسعار", "Pricing")}
                   </Link>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-foreground hover:bg-accent/30 px-3 py-2 rounded-md text-sm font-medium flex items-center"
-                  >
-                    Analytics
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-foreground hover:bg-accent/30 px-3 py-2 rounded-md text-sm font-medium"
-                  >
-                    Resources
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-foreground hover:bg-accent/30 px-3 py-2 rounded-md text-sm font-medium"
-                  >
-                    Pricing
-                  </a>
                 </li>
               </ul>
             </nav>
@@ -180,32 +174,76 @@ const Header = () => {
               )}
             </div>
 
-            <button className="p-2 rounded-full text-foreground hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-ring transition-colors">
-              <Bell className="h-5 w-5" />
-            </button>
+            {auth && (
+              <>
+                <button
+                  onClick={() => {
+                    if (!auth) {
+                      nav("/login");
+                    } else {
+                      toggleNotifications();
+                    }
+                  }}
+                  className="relative p-2 rounded-full text-foreground hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-ring transition-colors"
+                >
+                  <Bell className="h-5 w-5" />
+                  {auth && isNotificationOpend && (
+                    <div className="absolute right-0 top-[4.7rem]">
+                      <Notifications
+                        isNotificationOpend={isNotificationOpend}
+                        setIsNotificationOpend={setIsNotificationOpend}
+                      />
+                    </div>
+                  )}
+                </button>
 
-            <div className="h-7 w-7 rounded-full bg-primary flex items-center justify-center overflow-hidden">
-              <span className="text-xs font-medium text-primary-foreground">
-                JD
-              </span>
-            </div>
-            <span className="text-sm font-medium text-foreground">
-              John Doe
-            </span>
+                <Link
+                  to={"Profile/" + account?._id}
+                  className="h-7 w-7 rounded-full bg-primary flex items-center justify-center overflow-hidden"
+                >
+                  <span className="text-xs font-medium text-primary-foreground">
+                    {userImage ? (
+                      <img src={userImage} alt="" />
+                    ) : (
+                      account?.userName?.slice(0, 2)
+                    )}
+                  </span>
+                </Link>
+                <Link
+                  to={"Profile/" + account?._id}
+                  className="text-sm font-medium text-foreground"
+                >
+                  {/* {account?.userName} */}
+                </Link>
+                <button
+                  onClick={() => {
+                    logout();
+                  }}
+                  className={`text-foreground ${
+                    lang === "ar" ? "rotate-180" : ""
+                  }`}
+                >
+                  <LuLogOut />
+                </button>
+              </>
+            )}
+            {!auth && (
+              <>
+                <Link
+                  to={"/signIn"}
+                  className="text-foreground hover:bg-accent/30 px-4 py-1.5 rounded-md font-medium text-sm transition-colors"
+                >
+                  {T("تسجيل الدخول", "Sign in")}
+                </Link>
 
-            <Link
-              to={"/signIn"}
-              className="text-foreground hover:bg-accent/30 px-4 py-1.5 rounded-md font-medium text-sm transition-colors"
-            >
-              Sign in
-            </Link>
-
-            <Link
-              to={"/Signup"}
-              className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-1.5 rounded-md font-medium text-sm transition-colors"
-            >
-              Sign up
-            </Link>
+                <Link
+                  to={"/Signup"}
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-1.5 rounded-md font-medium text-sm transition-colors"
+                >
+                  {T("انشاء حساب", "Sign up")}
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button - only visible on mobile */}
@@ -239,119 +277,13 @@ const Header = () => {
 
       {/* Mobile menu - only appears on mobile */}
       {isMenuOpen && (
-        <div className="md:hidden bg-background border-t border-border shadow-lg">
-          <div className="pt-2 pb-3 space-y-1 px-4">
-            <a
-              href="#"
-              className="text-foreground hover:bg-accent/30 block px-3 py-2 rounded-md text-base font-medium"
-            >
-              Dashboard
-            </a>
-            <a
-              href="#"
-              className="text-foreground hover:bg-accent/30 block px-3 py-2 rounded-md text-base font-medium"
-            >
-              Products
-            </a>
-            <a
-              href="#"
-              className="text-foreground hover:bg-accent/30 block px-3 py-2 rounded-md text-base font-medium"
-            >
-              Analytics
-            </a>
-            <a
-              href="#"
-              className="text-foreground hover:bg-accent/30 block px-3 py-2 rounded-md text-base font-medium"
-            >
-              Resources
-            </a>
-            <a
-              href="#"
-              className="text-foreground hover:bg-accent/30 block px-3 py-2 rounded-md text-base font-medium"
-            >
-              Pricing
-            </a>
-          </div>
-
-          {/* Language selector in mobile menu */}
-          <div className="px-4 py-2 border-t border-border">
-            <div className="text-sm font-medium text-muted-foreground mb-2">
-              Language
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={() => changeLanguage("en")}
-                className={`px-3 py-2 rounded-md text-sm ${
-                  lang === "en"
-                    ? "bg-accent text-foreground font-medium"
-                    : "text-foreground hover:bg-accent/30"
-                }`}
-              >
-                English
-              </button>
-            </div>
-          </div>
-
-          <div className="pt-4 pb-3 border-t border-border">
-            <div className="flex items-center px-4">
-              <div className="h-9 w-9 rounded-full bg-primary flex items-center justify-center">
-                <span className="text-sm font-medium text-primary-foreground">
-                  JD
-                </span>
-              </div>
-              <div className="ml-3">
-                <div className="text-base font-medium text-foreground">
-                  John Doe
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  john@nexus.com
-                </div>
-              </div>
-              <button className="ml-auto p-2 rounded-full text-foreground hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-ring">
-                <Bell className="h-5 w-5" />
-              </button>
-            </div>
-            <div className="mt-3 px-4 space-y-1">
-              <a
-                href="#"
-                className="flex items-center text-foreground hover:bg-accent/30 px-3 py-2 rounded-md text-base font-medium"
-              >
-                <User className="mr-3 h-5 w-5" />
-                Your Profile
-              </a>
-              <a
-                href="#"
-                className="text-foreground hover:bg-accent/30 block px-3 py-2 rounded-md text-base font-medium"
-              >
-                Account
-              </a>
-              <a
-                href="#"
-                className="text-foreground hover:bg-accent/30 block px-3 py-2 rounded-md text-base font-medium"
-              >
-                Settings
-              </a>
-              <a
-                href="#"
-                className="text-foreground hover:bg-accent/30 block px-3 py-2 rounded-md text-base font-medium"
-              >
-                Billing
-              </a>
-
-              <div className="pt-2 space-y-2">
-                <button className="w-full text-foreground bg-accent/30 hover:bg-accent/50 px-3 py-2 rounded-md font-medium text-base transition-colors">
-                  Sign in
-                </button>
-                <button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 px-3 py-2 rounded-md font-medium text-base transition-colors">
-                  Sign up
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <MobilePopUp />
       )}
     </header>
   );
 };
+
+
+
 
 export default Header;

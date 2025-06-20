@@ -1,8 +1,8 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
+import { Calendar, ChartPie, Home, Inbox, Search, Settings } from "lucide-react";
 import { BsFillCalculatorFill } from "react-icons/bs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { FaChartArea } from "react-icons/fa6";
-import { MdSupportAgent } from "react-icons/md";
+import { MdNumbers, MdSupportAgent } from "react-icons/md";
 import {
   Sidebar,
   SidebarContent,
@@ -14,13 +14,25 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Link, useNavigate } from "react-router-dom";
-import { T } from "@/hooks/LangContext";
+import { useT } from "@/hooks/LangContext";
+import { useAuth } from "@/hooks/AuthContext";
+import { IoGameController } from "react-icons/io5";
 
 // Menu items.
 const items = [
   {
-    title: { ar: "الرسمات البيانيه", en: "Charts" },
+    title: { ar: "قراءات في نفس الوقت ", en: "Real-time readings" },
+    url: "numbers",
+    icon: MdNumbers,
+  },
+  {
+    title: { ar: "الرسمات البيانيه في الوقت الفعلي ", en: "Real-time Charts" },
     url: "charts",
+    icon: ChartPie ,
+  },
+  {
+    title: { ar: "الرسمات البيانيه التراكميه ", en: "Long-term Charts" },
+    url: "long-term-charts",
     icon: FaChartArea,
   },
   {
@@ -28,15 +40,15 @@ const items = [
     url: "account",
     icon: BsFillCalculatorFill,
   },
+  // {
+  //   title: { ar: "الدعم", en: "Support" },
+  //   url: "Support",
+  //   icon: MdSupportAgent,
+  // },
   {
-    title: { ar: "الدعم", en: "Support" },
-    url: "Support",
-    icon: MdSupportAgent,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search,
+    title: { ar: "التحكم", en: "Control" },
+    url: "control",
+    icon: IoGameController,
   },
   {
     title: "Settings",
@@ -47,12 +59,17 @@ const items = [
 const gender = "male";
 const photo = "/Ahmed.jpg";
 export function AppSidebar() {
+  const T = useT();
+  const { account } = useAuth();
   return (
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="flex items-center gap-5">
-            <Link to="/Profile" className="flex items-center gap-5">
+            <Link
+              to={`/Profile/${account?._id}`}
+              className="flex items-center gap-5"
+            >
               <Avatar>
                 <AvatarImage
                   src={
@@ -65,9 +82,11 @@ export function AppSidebar() {
                       : "/avatar.png"
                   }
                 />
-                <AvatarFallback className={"text-black"}>Ah</AvatarFallback>
+                <AvatarFallback className={"text-black"}>
+                  {account?.userName?.slice(0, 2)}
+                </AvatarFallback>
               </Avatar>
-              <span className="text-sm font-medium">Ahmed</span>
+              <span className="text-sm font-medium">{account?.userName}</span>
             </Link>
           </SidebarGroupLabel>
           <SidebarGroupContent className="mt-5">
@@ -75,7 +94,7 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem
                   className={"flex flex-col gap-3"}
-                  key={item.title}
+                  key={item.url}
                 >
                   <SidebarMenuButton asChild>
                     <Link to={item.url}>

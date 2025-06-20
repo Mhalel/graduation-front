@@ -12,10 +12,13 @@ import {
   Globe,
 } from "lucide-react";
 import GreenhouseScene from "./Greenhouse";
+import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/AuthContext";
 
 const LandingPage = () => {
+  const { auth } = useAuth();
   return (
-    <>
+    <div className="">
       <GreenhouseScene />
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
@@ -33,12 +36,18 @@ const LandingPage = () => {
                   intelligent automation.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <button className="px-6 py-3 bg-primary text-primary-foreground rounded-md font-medium hover:bg-primary/90 transition-colors">
+                  <Link
+                    to={auth ? "/dashboard/charts" : "/signIn"}
+                    className="px-6 py-3 bg-primary text-primary-foreground rounded-md font-medium hover:bg-primary/90 transition-colors"
+                  >
                     Get Started
-                  </button>
-                  <button className="px-6 py-3 bg-accent text-accent-foreground rounded-md font-medium hover:bg-accent/80 flex items-center justify-center gap-2 transition-colors">
+                  </Link>
+                  <Link
+                    to={"/comp"}
+                    className="px-6 py-3 bg-accent text-accent-foreground rounded-md font-medium hover:bg-accent/80 flex items-center justify-center gap-2 transition-colors"
+                  >
                     View Components <ArrowRight className="w-4 h-4" />
-                  </button>
+                  </Link>
                 </div>
               </div>
               <div className="md:w-1/2">
@@ -417,9 +426,12 @@ const LandingPage = () => {
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-4">
-                <button className="px-6 py-3 bg-primary text-primary-foreground rounded-md font-medium hover:bg-primary/90 transition-colors whitespace-nowrap">
+                <Link
+                  to={auth ? "/dashboard/charts" : "/signIn"}
+                  className="px-6 py-3 bg-primary text-primary-foreground rounded-md font-medium hover:bg-primary/90 transition-colors whitespace-nowrap"
+                >
                   Get Started
-                </button>
+                </Link>
                 <button className="px-6 py-3 bg-background text-foreground rounded-md font-medium hover:bg-background/80 border border-border transition-colors whitespace-nowrap">
                   Request Demo
                 </button>
@@ -577,7 +589,7 @@ const LandingPage = () => {
           </div>
         </footer>
       </div>
-    </>
+    </div>
   );
 };
 

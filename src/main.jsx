@@ -7,19 +7,34 @@ import { HelmetProvider } from "react-helmet-async";
 import "./index.css";
 import App from "./App.jsx";
 import { PopupProvider } from "./hooks/popupContext.jsx";
+import { SnackbarProvider } from "./hooks/SnackBar.jsx";
+import { AuthProvider } from "./hooks/AuthContext.jsx";
+import { MessagesSupportProvider } from "./hooks/UseChatWithAdmin.jsx";
+import { FileProvider } from "./hooks/FileProvider.jsx";
+import { SocketProvider } from "./hooks/SensorReadings.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Router>
-      <PopupProvider>
-        <ThemeProvider>
-          <LangProvider>
-            <HelmetProvider>
-              <App />
-            </HelmetProvider>
-          </LangProvider>
-        </ThemeProvider>
-      </PopupProvider>
+      <LangProvider>
+        <SocketProvider>
+          <AuthProvider>
+            <SnackbarProvider>
+              <PopupProvider>
+                <ThemeProvider>
+                  <HelmetProvider>
+                    <MessagesSupportProvider>
+                      <FileProvider>
+                        <App />
+                      </FileProvider>
+                    </MessagesSupportProvider>
+                  </HelmetProvider>
+                </ThemeProvider>
+              </PopupProvider>
+            </SnackbarProvider>
+          </AuthProvider>
+        </SocketProvider>
+      </LangProvider>
     </Router>
   </StrictMode>
 );

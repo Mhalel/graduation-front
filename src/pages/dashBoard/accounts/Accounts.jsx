@@ -8,9 +8,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { T, useLang } from "@/hooks/LangContext";
+import { useLang, useT } from "@/hooks/LangContext";
 
 export default function AccountingTable() {
+  const T = useT();
   const columns = ["Date", "Description", "Amount", "Balance"];
   const [data, setData] = useState([]);
   const { lang } = useLang(); // Assuming you have a hook to get the current language
