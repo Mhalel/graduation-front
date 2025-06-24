@@ -35,24 +35,24 @@ const items = [
     url: "long-term-charts",
     icon: FaChartArea,
   },
-  {
-    title: { ar: "الحسابات", en: "Accounts" },
-    url: "account",
-    icon: BsFillCalculatorFill,
-  },
+  // {
+  //   title: { ar: "الحسابات", en: "Accounts" },
+  //   url: "account",
+  //   icon: BsFillCalculatorFill,
+  // },
   // {
   //   title: { ar: "الدعم", en: "Support" },
   //   url: "Support",
   //   icon: MdSupportAgent,
   // },
+  // {
+  //   title: { ar: "التحكم", en: "Control" },
+  //   url: "control",
+  //   icon: IoGameController,
+  // },
   {
-    title: { ar: "التحكم", en: "Control" },
-    url: "control",
-    icon: IoGameController,
-  },
-  {
-    title: "Settings",
-    url: "#",
+    title:  { ar: "الاعدادات", en: "sittings" },
+    url: "sittings",
     icon: Settings,
   },
 ];

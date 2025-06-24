@@ -37,7 +37,6 @@ export const SocketProvider = ({ children }) => {
     const wornings = localStorage.getItem("wornings");
     const parsed = JSON.parse(saved);
     const worningsparsed = JSON.parse(wornings);
-    console.log("worningsparsed", worningsparsed);
     if (saved) {
       try {
         if (Array.isArray(parsed)) {
@@ -68,11 +67,12 @@ export const SocketProvider = ({ children }) => {
 
   // 🌐 Socket connection and handling new reading events
   useEffect(() => {
-    const socketInstance = io("http://localhost:7000");
+    const socketInstance = io(baseURL.replace("/api/v1", ""), {
+      transports: ["websocket"],
+    });
     setSocket(socketInstance);
 
     socketInstance.on("newReading", (data, alerts, callback) => {
-      // console.log("alerts", alerts);
       setRealTimeReading(data);
       setReadings((prev) => {
         const safePrev1 = Array.isArray(prev) ? prev : [];
@@ -83,7 +83,7 @@ export const SocketProvider = ({ children }) => {
         localStorage.setItem("sensor_readings", JSON.stringify(updated1));
         return updated1;
       });
-      
+
       setWorning((prev) => {
         const safePrev = Array.isArray(prev) ? prev : [];
         const updated = [...safePrev, ...alerts];
@@ -103,7 +103,15 @@ export const SocketProvider = ({ children }) => {
 
   return (
     <SocketContext.Provider
-      value={{ socket, readings, realTimeReading, worning }}
+      value={{
+        socket,
+        readings,
+        realTimeReading,
+        worning,
+        setRealTimeReading,
+        setReadings,
+        setWorning,
+      }}
     >
       {children}
     </SocketContext.Provider>

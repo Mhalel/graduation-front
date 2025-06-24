@@ -8,6 +8,12 @@ const Readings = {
       params: { limit },
     });
   },
+  getAlerts: (limit) => {
+    const url = "/readings/getAlerts";
+    return axiosClient.get(url, {
+      params: { limit },
+    });
+  },
 };
 
 export default Readings;

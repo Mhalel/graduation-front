@@ -72,6 +72,15 @@ const Signin = () => {
             .catch((err) => {
               console.error(err);
             });
+          Readings.getAlerts(800)
+            .then((res) => {
+              console.log("res", res);
+              const wornings = res.data;
+              localStorage.setItem("wornings", JSON.stringify(wornings));
+            })
+            .catch((err) => {
+              console.error(err);
+            });
           GPTApis.GptChatHestory({ auth })
             .then((res) => {
               const { Hestory } = res.data;

@@ -1,3 +1,4 @@
+import * as echarts from 'echarts';
 import {
   LineChart,
   Line,
@@ -11,7 +12,7 @@ import {
   BarChart,
   Bar,
 } from "recharts";
-import { Fragment } from "react";
+import { Fragment, useRef } from "react";
 // import { createRoot } from "react-dom/client";
 import { AgGauge } from "ag-charts-react";
 import "ag-charts-enterprise";
@@ -21,6 +22,7 @@ import { useSocket } from "@/hooks/SensorReadings";
 import GaugeComponent from "react-gauge-component";
 // import axios from "axios";
 import { useLang, useT } from "@/hooks/LangContext";
+import MqttSender from "@/pages/mqttTest/mqtt";
 
 const defaultReading = {
   autoState: false,
@@ -120,70 +122,55 @@ export default function ChartPage() {
 
   return (
     <div dir={lang === "ar" ? "rtl" : "ltr"} className="p-5">
-      <section>
-        <h1>{T("مخططات الطقس", "weather Charts")}</h1>
-        <div className=""></div>
-        <div className="grid md:grid-cols-2 grid-cols-1 p-5 gap-20  lg:grid-cols-3   ">
-          <aside className="">
-            <TempratureChart value={eTemp} title={T("الطقس", "Temprature")} />
-          </aside>
-          <aside className="">
-            <HumidityChart value={humidity} title={T("الرطوبه", "humedity")} />
-          </aside>
-          <aside className="">
-            <PresureChart
-              value={pressure}
-              title={T("الضغط الجوي", "pressure")}
-            />
-          </aside>
-        </div>
-      </section>
-      <section>
-        <h1>{T("النباتات", "plants1")}</h1>
-        <div className=""></div>
-        <div className="grid md:grid-cols-2 grid-cols-1 p-5 gap-20  lg:grid-cols-3   ">
-          <aside className="">
-            <TempratureChart
-              value={s1Temp}
-              title={T("درجه الحراره", "Temprature")}
-              unit={"ºC"}
-            />
-          </aside>
-          <aside className="">
-            <TempratureChart
-              value={s1Moisture}
-              title={T("رطوبه التربه", "Moisture")}
-              unit={"%"}
-            />
-          </aside>
-        </div>
-      </section>
-      <section>
-        <h1>{T("النباتات", "plants2")}</h1>
-        <div className=""></div>
-        <div className="grid md:grid-cols-2 grid-cols-1 p-5 gap-20  lg:grid-cols-3   ">
-          <aside className="">
-            <TempratureChart
-              value={s2Temp}
-              title={T("درجه الحراره", "Temprature")}
-              unit={"ºC"}
-            />
-          </aside>
-          <aside className="">
-            <TempratureChart
-              value={s2Moisture}
-              title={T("رطوبه التربه", "Moisture")}
-              unit={"%"}
-            />
-          </aside>
-        </div>
-      </section>
-      <section>
-        <MCUtemp
-          cTemp={cTemp}
-          text={lang === "ar" ? "درجه حراره المعالج" : "MCU temprature"}
-        />
-      </section>
+      <h1>{T("مخططات الطقس", "weather Charts")}</h1>
+      <MqttSender />
+      <div className="flex flex-wrap justify-center items-center  p-5 gap-20 ">
+        <aside className="">
+          <TempratureChart value={eTemp} title={T("الطقس", "Temprature ")} />
+        </aside>
+        <aside className="">
+          <HumidityChart value={humidity} title={T("الرطوبه", "humedity")} />
+        </aside>
+        <aside className="">
+          <PresureChart value={pressure} title={T("الضغط الجوي", "pressure")} />
+        </aside>
+        <aside className="">
+          <MCUtemp
+            
+            cTemp={cTemp}
+            text={lang === "ar" ? "درجه حراره المعالج" : "MCU temprature"}
+          />
+        </aside>
+        <aside className="">
+          <TempratureChart
+            value={s1Temp}
+            title={T(" درجه الحراره التربه الاولي", "Temprature in planet1")}
+            unit={"ºC"}
+          />
+        </aside>
+        <aside className="">
+          <TempratureChart
+            value={s1Moisture}
+            title={T("رطوبه التربه الاولي", "Moisture in planet1")}
+            unit={"%"}
+          />
+        </aside>
+
+        <aside className="">
+          <TempratureChart
+            value={s2Temp}
+            title={T("ال درجه الحراره التربه الاولي", "Temprature in planet2")}
+            unit={"ºC"}
+          />
+        </aside>
+        <aside className="">
+          <TempratureChart
+            value={s2Moisture}
+            title={T("رطوبه التربه التربه الاولي", "Moisture in planet2")}
+            unit={"%"}
+          />
+        </aside>
+      </div>
     </div>
   );
 }
@@ -197,52 +184,78 @@ const TempratureChart = ({ title = "", value = 0, unit = "ºC" }) => {
           width: 0.2,
           padding: 0.005,
           cornerRadius: 0.1,
-          // gradient: true,
-          subArcs: [
-            {
-              limit: 15,
-              color: "#EA4228",
-              showTick: true,
-              tooltip: {
+          gradient: true,
+
+
+     subArcs: [
+          {
+            limit: 20,
+            color: "#5BE12C", // أخضر: آمن
+            showTick: true,
+             tooltip: {
                 text: "Too low temperature!",
               },
-              onClick: () => console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),
-              onMouseMove: () =>
-                console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"),
-              onMouseLeave: () =>
-                console.log("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"),
-            },
-            {
-              limit: 17,
-              color: "#F5CD19",
-              showTick: true,
-              tooltip: {
+          },
+          {
+            limit: 35,
+            color: "#F5CD19", // أصفر: تحذير
+            showTick: true,
+            tooltip: {
                 text: "Low temperature!",
               },
-            },
-            {
-              limit: 28,
-              color: "#5BE12C",
-              showTick: true,
-              tooltip: {
-                text: "OK temperature!",
-              },
-            },
-            {
-              limit: 30,
-              color: "#F5CD19",
-              showTick: true,
-              tooltip: {
-                text: "High temperature!",
-              },
-            },
-            {
-              color: "#EA4228",
-              tooltip: {
-                text: "Too high temperature!",
-              },
-            },
-          ],
+          },
+          {
+            limit: 45,
+            color: "#FF8C00",// أحمر: خطر
+            showTick: true,
+          },
+          {
+            limit: 55,
+            color: "#990000",// أحمر: خطر
+            showTick: true,
+          },
+        ],
+
+          // subArcs: [
+          //   {
+          //     limit: 15,
+          //     color: "#EA4228",
+          //     showTick: true,
+          //     tooltip: {
+          //       text: "Too low temperature!",
+          //     },
+          //   },
+          //   {
+          //     limit: 17,
+          //     color: "#F5CD19",
+          //     showTick: true,
+          //     tooltip: {
+          //       text: "Low temperature!",
+          //     },
+          //   },
+          //   {
+          //     limit: 28,
+          //     color: "#5BE12C",
+          //     showTick: true,
+          //     tooltip: {
+          //       text: "OK temperature!",
+          //     },
+          //   },
+          //   {
+          //     limit: 30,
+          //     color: "#F5CD19",
+          //     showTick: true,
+          //     tooltip: {
+          //       text: "High temperature!",
+          //     },
+          //   },
+          //   {
+          //     color: "#EA4228",
+          //     tooltip: {
+          //       text: "Too high temperature!",
+          //     },
+          //   },
+          // ],
         }}
         pointer={{
           color: "#345243",
@@ -262,8 +275,8 @@ const TempratureChart = ({ title = "", value = 0, unit = "ºC" }) => {
           },
         }}
         value={value}
-        minValue={10}
-        maxValue={35}
+        minValue={0}
+        maxValue={60}
       />
       <div className="text-center">{title}</div>
     </div>
@@ -344,50 +357,6 @@ const PresureChart = ({ title = "الضغط الجوي", value = 0 }) => {
   );
 };
 
-// import  {AgChartsReact}  from "ag-charts-react";
-// import "ag-charts-enterprise";
-
-// const Ctemp = ({ cTemp }) => {
-//   const [options, setOptions] = useState({
-//     data: [{ value: cTemp }],
-//     series: [
-//       {
-//         type: "radial-gauge",
-//         angleExtent: 270,
-//         valueKey: "value",
-//         cornerRadius: 99,
-//         cornerMode: "container",
-//       },
-//     ],
-//     axes: [
-//       {
-//         type: "radial-number",
-//         position: "bottom",
-//         min: 0,
-//         max: 100,
-//       },
-//     ],
-//     background: {
-//       fill: "transparent",
-//     },
-//   });
-
-//   useEffect(() => {
-//     setOptions((prev) => ({
-//       ...prev,
-//       data: [{ value: cTemp }],
-//     }));
-//   }, [cTemp]);
-
-//   return (
-//     <Fragment>
-//       <div className="w-fit h-fit">
-//         <AgChartsReact options={options} />
-//       </div>
-//     </Fragment>
-//   );
-// };
-
 const MCUtemp = ({ cTemp = 100, text }) => (
   <div>
     <GaugeComponent
@@ -399,18 +368,23 @@ const MCUtemp = ({ cTemp = 100, text }) => (
         padding: 0,
         subArcs: [
           {
-            limit: 30,
+            limit: 20,
             color: "#5BE12C", // أخضر: آمن
             showTick: true,
           },
           {
-            limit: 50,
+            limit: 35,
             color: "#F5CD19", // أصفر: تحذير
             showTick: true,
           },
           {
-            limit: 75,
-            color: "#EA4228", // أحمر: خطر
+            limit: 45,
+            color: "#FF8C00",// أحمر: خطر
+            showTick: true,
+          },
+          {
+            limit: 55,
+            color: "#990000",// أحمر: خطر
             showTick: true,
           },
         ],
@@ -425,3 +399,7 @@ const MCUtemp = ({ cTemp = 100, text }) => (
     <p>{text}</p>
   </div>
 );
+
+
+
+

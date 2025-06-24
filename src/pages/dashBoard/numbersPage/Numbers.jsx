@@ -9,6 +9,7 @@ import {
 import { useTheme } from "@/hooks/themeprovider";
 import { useSocket } from "@/hooks/SensorReadings";
 import { Card } from "./Cards";
+import MqttSender from "@/pages/mqttTest/mqtt";
 
 const defaultReading = {
   autoState: false,
@@ -53,7 +54,7 @@ const Numbers = () => {
       setLastReading(defaultReading);
     }
   }, [realTimeReading]);
-
+  // console.log("lastReading", lastReading);
   const {
     autoState,
     dhFanState,
@@ -118,6 +119,7 @@ const Numbers = () => {
         isDark ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"
       }`}
     >
+      
       <div className="max-w-7xl mx-auto p-6">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-center flex-1">
