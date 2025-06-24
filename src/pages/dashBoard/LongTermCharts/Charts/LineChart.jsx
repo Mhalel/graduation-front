@@ -120,7 +120,7 @@ const LineChartWithTemperatureAndHumidity = ({ title, planit1Data }) => {
       <ResponsiveContainer>
         <LineChart
           data={day}
-          margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+          margin={{ top: 20, right: 10, left: -15, bottom: 20 }}
           onMouseMove={(e) => setActiveIndex(e?.activeTooltipIndex ?? null)}
           onMouseLeave={() => setActiveIndex(null)}
         >
@@ -185,22 +185,6 @@ const LineChartWithTemperatureAndHumidity = ({ title, planit1Data }) => {
           />
         </LineChart>
       </ResponsiveContainer>
-
-      {activeIndex !== null && day[activeIndex] && (
-        <div
-          className="pointer-events-none absolute"
-          style={{
-            left: `${(activeIndex / (day.length - 1)) * 100}%`,
-            top: "90px",
-            height: "280px",
-            width: "2px",
-            background:
-              day[activeIndex][temp] > day[activeIndex][moisture]
-                ? "linear-gradient(to bottom, #7B68EE 0%, transparent 100%)"
-                : "linear-gradient(to bottom, #FF6B6B 0%, transparent 100%)",
-          }}
-        />
-      )}
 
       <div className="flex flex-col items-center gap-2 mt-4 text-sm text-white">
         <h4 className="font-semibold">{title}</h4>

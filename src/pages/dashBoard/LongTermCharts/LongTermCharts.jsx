@@ -1,44 +1,13 @@
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
-import React, { useEffect, useState } from "react";
 import { useSocket } from "@/hooks/SensorReadings";
 import { useLang, useT } from "@/hooks/LangContext";
-import { useTheme } from "@/hooks/themeprovider";
 import LineChartWithTemperatureAndHumidity from "./Charts/LineChart";
 import CustomBarChart from "./Charts/CustomBarChart";
 import LightChart from "./Charts/LightChart";
 
-const defaultReading = {
-  autoState: false,
-  dhFanState: false,
-  ccFanState: false,
-  acFanState: false,
-  pumpState: false,
-  ledState: false,
-  lux: 0,
-  luxGoal: 0,
-  eTemp: 0,
-  humidity: 0,
-  pressure: 0,
-  cTemp: 0,
-  s1Temp: 0,
-  s2Temp: 0,
-  s1Moisture: 0,
-  s2Moisture: 0,
-};
 export default function LongTermCharts() {
   const { lang } = useLang();
-  const T = useT();
+  // const T = useT();
   const { readings } = useSocket();
-  // console.log("readings", readings);
-
   const sortedReadings = [...readings].sort(
     (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
   );
@@ -73,7 +42,7 @@ export default function LongTermCharts() {
           <span className="w-fit h-fit">
             <LightChart
               title={lang === "ar" ? "النبته الثانيه " : "the second planet"}
-              data={Formatter(["lux","luxGoal"], sortedReadings)}
+              data={Formatter(["lux", "luxGoal"], sortedReadings)}
             />
           </span>
         </div>
@@ -83,10 +52,25 @@ export default function LongTermCharts() {
 }
 
 const Formatter = (values = [], sortedReadings) => {
-  const chunkSize = 12;
+  const chunkSize = 24;
   const result = [];
 
+  const filteredReadings = [];
+  let lastAcceptedTime = null;
+
   sortedReadings.forEach((reading) => {
+    const currentTime = new Date(reading.createdAt);
+
+    if (
+      !lastAcceptedTime ||
+      currentTime - lastAcceptedTime >= 0 // 30 دقيقة بالميلي ثانية
+    ) {
+      filteredReadings.push(reading);
+      lastAcceptedTime = currentTime;
+    }
+  });
+
+  filteredReadings.forEach((reading) => {
     const dataPoint = {
       [values[0]]: reading[values[0]],
       [values[1]]: reading[values[1]],
@@ -101,5 +85,3 @@ const Formatter = (values = [], sortedReadings) => {
 
   return result;
 };
-
-// ✅ Tooltip مخصص

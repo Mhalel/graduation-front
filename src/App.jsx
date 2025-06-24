@@ -22,6 +22,7 @@ import Numbers from "./pages/dashBoard/numbersPage/Numbers";
 import { useSocket } from "./hooks/SensorReadings";
 import axios from "axios";
 import LongTermCharts from "./pages/dashBoard/LongTermCharts/LongTermCharts";
+import Sittings from "./pages/dashBoard/Sittings/Sittings";
 
 function App() {
   const { auth } = useAuth();
@@ -58,7 +59,7 @@ function App() {
     const data = generateRandomData();
     try {
       const res = await axios.post(
-        // "http://grad-back-production.up.railway.app/api/v1/readings/readings",
+        // "https://grad-back-production.up.railway.app/api/v1/readings/readings",
         "http://localhost:7000/api/v1/readings/readings",
         data
       );
@@ -68,13 +69,13 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      ranmizeData();
-    }, 60 * 100); // كل دقيقة
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     ranmizeData();
+  //   }, 60 * 100); // كل دقيقة
 
-    return () => clearInterval(interval); // تنظيف عند إزالة المكون
-  }, []);
+  //   return () => clearInterval(interval); // تنظيف عند إزالة المكون
+  // }, []);
   // useEffect(() => {
   //   console.log("realTimeReading", realTimeReading);
   // }, [realTimeReading]);
@@ -99,6 +100,7 @@ function App() {
             <Route path="numbers" element={<Numbers />} />
             <Route path="charts" element={<ChartPage />} />
             <Route path="long-term-charts" element={<LongTermCharts />} />
+            <Route path="sittings" element={<Sittings />} />
             <Route path="account" element={<Accounts />} />
             <Route path="control" element={<Controls />} />
             <Route path="Support" element={<Messanger />} />
