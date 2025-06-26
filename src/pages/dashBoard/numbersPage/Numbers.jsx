@@ -1,15 +1,10 @@
 import React, { useEffect, useState } from "react";
-import {
-  Thermometer,
-  Droplets,
-  Gauge,
-  Lightbulb,
-  Fan,
-} from "lucide-react";
+import { Thermometer, Droplets, Gauge, Lightbulb, Fan } from "lucide-react";
 import { useTheme } from "@/hooks/themeprovider";
 import { useSocket } from "@/hooks/SensorReadings";
 import { Card } from "./Cards";
-import MqttSender from "@/pages/mqttTest/mqtt";
+import { useT } from "@/hooks/LangContext";
+// import MqttSender from "@/pages/mqttTest/mqtt";
 
 const defaultReading = {
   autoState: false,
@@ -39,11 +34,13 @@ const isDefaultReading = (reading) => {
 const Numbers = () => {
   const { isDark } = useTheme();
   const { realTimeReading } = useSocket();
-
+  const T = useT();
   const [lastReading, setLastReading] = useState(defaultReading);
 
   useEffect(() => {
-    const localData = JSON.parse(localStorage.getItem("sensor_readings") || "[]");
+    const localData = JSON.parse(
+      localStorage.getItem("sensor_readings") || "[]"
+    );
     const lastLocal = localData.length ? localData[localData.length - 1] : null;
 
     if (!isDefaultReading(realTimeReading)) {
@@ -119,11 +116,10 @@ const Numbers = () => {
         isDark ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"
       }`}
     >
-      
       <div className="max-w-7xl mx-auto p-6">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-center flex-1">
-            Smart Greenhouse Dashboard
+            {T("لوحة معلومات الدفيئة الذكية", "Smart Greenhouse Dashboard")}
           </h1>
         </div>
 

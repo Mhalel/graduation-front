@@ -1,4 +1,4 @@
-import { use, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Trash2,
   AlertTriangle,
@@ -6,17 +6,60 @@ import {
   Database,
   Bell,
   Shield,
+  User,
+  Edit3,
+  Save,
+  X,
+  Camera,
 } from "lucide-react";
 import { useT } from "@/hooks/LangContext";
 import Delete from "@/Apis/Delete";
 import { useSnackbar } from "@/hooks/SnackBar";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/AuthContext";
 import { useSocket } from "@/hooks/SensorReadings";
+import { useFileUploader } from "@/hooks/FileProvider";
+import UserApi from "@/Apis/User";
 
 export default function Sittings() {
   const { setWorning, setReadings, setRealTimeReading } = useSocket();
-  const { auth } = useAuth();
+  const { account, auth, setAccount } = useAuth();
+  const [dragOv, setDragOv] = useState(false);
+  const [accountData, setAccountData] = useState({
+    fullName: account?.fullName || "",
+    userName: account?.userName || "",
+    dateOfBirth: account?.dateOfBirth || "",
+    photoLink: account?.photoLink || "",
+    email: account?.email || "",
+    phone: account?.phone || "",
+    gender: account?.gender || "",
+  });
+  useEffect(() => {
+    console.log("account", account);
+  }, [account]);
+
+  const fileInputRef = useRef();
+
+  const { imagePreview, handleFileChange } = useFileUploader();
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith("image/")) {
+      handleFileChange(file);
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setDragOv(true);
+  };
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setDragOv(false);
+  };
+
+  const preview = imagePreview || account?.photoLink;
+
   const T = useT();
   const { openSnackbar } = useSnackbar();
   const [isDeleting, setIsDeleting] = useState({
@@ -24,6 +67,9 @@ export default function Sittings() {
     readings: false,
     notifications: false,
   });
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const handleDeleteAccount = async () => {
     if (
@@ -119,6 +165,57 @@ export default function Sittings() {
     }
   };
 
+  // Account update handlers
+  const handleInputChange = (field, value) => {
+    setAccountData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleUpdateAccount = async () => {
+    setIsUpdating(true);
+    UserApi.UpdateProfile(accountData, auth)
+      .then((res) => {
+        openSnackbar(
+          T("تم تحديث الحساب بنجاح", "Account updated successfully"),
+          {
+            type: "success",
+          }
+        );
+        setIsEditing(false);
+        UserApi.GetAccountData(auth).then((res) => {
+          setAccount(res?.data);
+          localStorage.setItem("account", JSON.stringify(res?.data));
+        });
+      })
+      .catch((err) => {
+        openSnackbar(T("خطأ في تحديث الحساب", "Error updating account"), {
+          type: "error",
+        });
+        console.error("خطأ في تحديث الحساب:", error);
+      })
+      .finally(() => {
+        setIsUpdating(false);
+      });
+  };
+
+  const handleCancelEdit = () => {
+    setAccountData({
+      fullName: account?.fullName || "",
+      userName: account?.userName || "",
+      dateOfBirth: account?.dateOfBirth || "",
+      photoLink: account?.photoLink || "",
+      email: account?.email || "",
+      phone: account?.phone || "",
+      gender: account?.gender || "",
+    });
+    setIsEditing(false);
+  };
+  useEffect(() => {
+    setAccountData((prev) => ({ ...prev, photoLink: imagePreview }));
+  }, [imagePreview]);
+
   return (
     <div className="min-h-screen bg-background transition-colors duration-300">
       <div className="max-w-4xl mx-auto p-6 space-y-6">
@@ -142,17 +239,258 @@ export default function Sittings() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Account Settings */}
+          <div className="bg-card rounded-xl border shadow-sm p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-500/10 rounded-lg">
+                  <User className="w-5 h-5 text-blue-500" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-semibold text-foreground">
+                    {T("إعدادات الحساب", "Account Settings")}
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    {T(
+                      "تحديث معلومات الحساب الشخصي",
+                      "Update personal account information"
+                    )}
+                  </p>
+                </div>
+              </div>
+              {!isEditing && (
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="flex items-center gap-2 px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+                >
+                  <Edit3 className="w-4 h-4" />
+                  <span className="text-sm">{T("تعديل", "Edit")}</span>
+                </button>
+              )}
+            </div>
+
+            <div className="space-y-4">
+              {/* Profile Photo */}
+              <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg">
+                <div className="relative">
+                  <div
+                    className={`w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center overflow-hidden cursor-pointer border-2 border-dashed ${
+                      dragOv && "border-blue-400"
+                    } transition`}
+                    onDrop={isEditing && handleDrop}
+                    onDragOver={isEditing && handleDragOver}
+                    onDragLeave={isEditing && handleDragLeave}
+                    onClick={() => isEditing && fileInputRef.current.click()}
+                  >
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => handleFileChange(e.target.files[0])}
+                    />
+                    {preview ? (
+                      <img
+                        src={preview}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <User className="w-8 h-8 text-primary" />
+                    )}
+                  </div>
+
+                  {isEditing && (
+                    <button
+                      onClick={() => fileInputRef.current.click()}
+                      className="absolute -bottom-1 -right-1 p-1 bg-blue-500 rounded-full text-white hover:bg-blue-600"
+                    >
+                      <Camera className="w-3 h-3" />
+                    </button>
+                  )}
+                </div>
+                <div>
+                  <p className="font-medium text-foreground">
+                    {accountData.fullName || T("اسم المستخدم", "Username")}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {accountData.email || T("البريد الإلكتروني", "Email")}
+                  </p>
+                </div>
+              </div>
+
+              {/* Form Fields */}
+              <div className="grid grid-cols-1 gap-4">
+                {/* Full Name */}
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    {T("الاسم الكامل", "Full Name")}
+                  </label>
+                  <input
+                    type="text"
+                    value={accountData.fullName}
+                    onChange={(e) =>
+                      handleInputChange("fullName", e.target.value)
+                    }
+                    disabled={!isEditing}
+                    className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground disabled:bg-muted disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                {/* Username */}
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    {T("اسم المستخدم", "Username")}
+                  </label>
+                  <input
+                    type="text"
+                    value={accountData.userName}
+                    onChange={(e) =>
+                      handleInputChange("userName", e.target.value)
+                    }
+                    disabled={!isEditing}
+                    className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground disabled:bg-muted disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    {T("البريد الإلكتروني", "Email")}
+                  </label>
+                  <input
+                    type="email"
+                    value={accountData.email}
+                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    disabled={!isEditing}
+                    className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground disabled:bg-muted disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                {/* Phone */}
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    {T("رقم الهاتف", "Phone Number")}
+                  </label>
+                  <input
+                    type="tel"
+                    value={accountData.phone}
+                    onChange={(e) => handleInputChange("phone", e.target.value)}
+                    disabled={!isEditing}
+                    className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground disabled:bg-muted disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                {/* Date of Birth */}
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    {T("تاريخ الميلاد", "Date of Birth")}
+                  </label>
+                  <input
+                    type="date"
+                    value={accountData.dateOfBirth}
+                    onChange={(e) =>
+                      handleInputChange("dateOfBirth", e.target.value)
+                    }
+                    disabled={!isEditing}
+                    className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground disabled:bg-muted disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                {/* Gender */}
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    {T("الجنس", "Gender")}
+                  </label>
+                  <select
+                    value={accountData.gender}
+                    onChange={(e) =>
+                      handleInputChange("gender", e.target.value)
+                    }
+                    disabled={!isEditing}
+                    className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground disabled:bg-muted disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">{T("اختر الجنس", "Select Gender")}</option>
+                    <option value="male">{T("ذكر", "Male")}</option>
+                    <option value="female">{T("أنثى", "Female")}</option>
+                  </select>
+                </div>
+
+                {/* Password */}
+                {/* {isEditing && (
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      {T("كلمة المرور الجديدة", "New Password")}
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        value={accountData.password}
+                        onChange={(e) =>
+                          handleInputChange("password", e.target.value)
+                        }
+                        placeholder={T(
+                          "اتركه فارغاً للاحتفاظ بكلمة المرور الحالية",
+                          "Leave empty to keep current password"
+                        )}
+                        className="w-full px-3 py-2 pr-10 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="w-4 h-4" />
+                        ) : (
+                          <Eye className="w-4 h-4" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                )} */}
+              </div>
+
+              {/* Action Buttons */}
+              {isEditing && (
+                <div className="flex gap-3 pt-4 border-t">
+                  <button
+                    onClick={handleUpdateAccount}
+                    disabled={isUpdating}
+                    className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 disabled:bg-green-300 text-white rounded-lg transition-colors disabled:cursor-not-allowed flex-1"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>
+                      {isUpdating
+                        ? T("جاري الحفظ...", "Saving...")
+                        : T("حفظ التغييرات", "Save Changes")}
+                    </span>
+                  </button>
+                  <button
+                    onClick={handleCancelEdit}
+                    disabled={isUpdating}
+                    className="flex items-center gap-2 px-4 py-2 bg-gray-500 hover:bg-gray-600 disabled:bg-gray-300 text-white rounded-lg transition-colors disabled:cursor-not-allowed"
+                  >
+                    <X className="w-4 h-4" />
+                    <span>{T("إلغاء", "Cancel")}</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Data Deletion Operations */}
           <div className="bg-card rounded-xl border shadow-sm p-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="p-2 bg-destructive/10 rounded-lg">
                 <Shield className="w-5 h-5 text-destructive" />
               </div>
               <div>
-                {/* <h2 className="text-xl font-semibold text-foreground">
-                  منطقة الخطر
-                </h2> */}
+                <h2 className="text-xl font-semibold text-foreground">
+                  {T("عمليات حذف البيانات", "Data Deletion Operations")}
+                </h2>
                 <p className="text-sm text-muted-foreground">
-                  {T(" عمليات حذف البيانات", "Data Deletion Operations")}
+                  {T("معلومات السلامة", "Safety Information")}
                 </p>
               </div>
             </div>
@@ -256,25 +594,9 @@ export default function Sittings() {
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Warning Panel */}
-          <div className="bg-card rounded-xl border shadow-sm p-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-amber-500/10 rounded-lg">
-                <AlertTriangle className="w-5 h-5 text-amber-500" />
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold text-foreground">
-                  {T("تحذير مهم", "Important Warning")}
-                </h2>
-                <p className="text-sm text-muted-foreground">
-                  {T("معلومات السلامة", "Safety Information")}
-                </p>
-              </div>
-            </div>
-
-            <div className="space-y-4">
+            {/* Warning Panel */}
+            <div className="mt-6 space-y-4">
               <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
                 <div className="flex items-start gap-3">
                   <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />

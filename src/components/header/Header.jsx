@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/AuthContext";
 import { LuLogOut } from "react-icons/lu";
 import Notifications from "../Notifications";
 import MobilePopUp from "./components/mobilePopUp";
-
+import { GiGreenhouse } from "react-icons/gi";
 const Header = () => {
   const { account, auth, logout } = useAuth();
   const nav = useNavigate();
@@ -73,35 +73,8 @@ const Header = () => {
           {/* Logo and brand */}
           <div className="flex items-center">
             <Link to={"/"} className="flex-shrink-0 flex items-center mr-4">
-              <svg
-                className="h-8 w-8 text-primary"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M12 2L2 7L12 12L22 7L12 2Z"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M2 17L12 22L22 17"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M2 12L12 17L22 12"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <span className="ml-2 text-primary font-bold text-xl">Nexus</span>
+              <GiGreenhouse size={30} />
+              <span className="ml-2 text-primary font-bold text-xl">GreenHouse</span>
             </Link>
 
             {/* Desktop Navigation */}
@@ -118,14 +91,14 @@ const Header = () => {
                   </li>
                 )}
 
-                <li>
+                {/* <li>
                   <Link
                     to={"/Pricing"}
                     className="text-foreground hover:bg-accent/30 px-3 py-2 rounded-md text-sm font-medium"
                   >
                     {T("الاسعار", "Pricing")}
                   </Link>
-                </li>
+                </li> */}
               </ul>
             </nav>
           </div>
@@ -197,8 +170,8 @@ const Header = () => {
                   )}
                 </button>
 
-                <Link
-                  to={"Profile/" + account?._id}
+                <div
+                  // to={"Profile/" + account?._id}
                   className="h-7 w-7 rounded-full bg-primary flex items-center justify-center overflow-hidden"
                 >
                   <span className="text-xs font-medium text-primary-foreground">
@@ -208,13 +181,13 @@ const Header = () => {
                       account?.userName?.slice(0, 2)
                     )}
                   </span>
-                </Link>
-                <Link
-                  to={"Profile/" + account?._id}
+                </div>
+                <div
+                  // to={"Profile/" + account?._id}
                   className="text-sm font-medium text-foreground"
                 >
-                  {/* {account?.userName} */}
-                </Link>
+                  {account?.userName}
+                </div>
                 <button
                   onClick={() => {
                     logout();

@@ -1,10 +1,9 @@
 export const Card = ({ isDark = "dark", type, data, isActive, onClick }) => {
-  console.log("isDark",isDark)
+  console.log("isDark", isDark);
   const baseClasses = `rounded-lg border transition-all duration-200 ${
-    isDark ? "border-gray-700 bg-gray 800" : "border-gray-300 bg-white"
+    isDark ? " border-gray-300 " : " border-gray-300 bg-white"
   }`;
 
-  // Stat Card
   if (type === "stat") {
     const { icon: Icon, label, value, unit } = data;
     return (
@@ -12,13 +11,13 @@ export const Card = ({ isDark = "dark", type, data, isActive, onClick }) => {
         <div className="flex items-center gap-2 mb-2">
           <Icon className="w-5 h-5 text-blue-500" />
           <span
-            className={`text-sm ${isDark ? "text-gray-300" : "text-gray-600"}`}
+            className={`text-sm ${isDark ? "text-gray-300" : "text-gray-700"}`}
           >
             {label}
           </span>
         </div>
         <div className="text-2xl font-bold">
-          {value  ?? 0} <span className="text-lg font-normal">{unit}</span>
+          {value ?? 0} <span className="text-lg font-normal">{unit}</span>
         </div>
       </div>
     );
@@ -57,7 +56,9 @@ export const Card = ({ isDark = "dark", type, data, isActive, onClick }) => {
         onClick={onClick}
         className={`w-full p-4 ${baseClasses} flex flex-col items-center gap-2 ${
           isActive
-            ? "bg-blue-600 border-blue-500 text-white shadow-lg"
+            ? ` border-blue-500  ${
+                isDark ? "text-white bg-blue-950" : "text-gray-700"
+              } shadow-lg`
             : isDark
             ? "hover:bg-gray-700 text-gray-300"
             : "hover:bg-gray-50 text-gray-700"
