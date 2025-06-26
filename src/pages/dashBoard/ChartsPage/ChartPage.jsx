@@ -22,7 +22,7 @@ import { useSocket } from "@/hooks/SensorReadings";
 import GaugeComponent from "react-gauge-component";
 // import axios from "axios";
 import { useLang, useT } from "@/hooks/LangContext";
-import MqttSender from "@/pages/mqttTest/mqtt";
+// import MqttSender from "@/pages/mqttTest/mqtt";
 
 const defaultReading = {
   autoState: false,
@@ -123,7 +123,7 @@ export default function ChartPage() {
   return (
     <div dir={lang === "ar" ? "rtl" : "ltr"} className="p-5">
       <h1>{T("مخططات الطقس", "weather Charts")}</h1>
-      <MqttSender />
+      {/* <MqttSender /> */}
       <div className="flex flex-wrap justify-center items-center  p-5 gap-20 ">
         <aside className="">
           <TempratureChart value={eTemp} title={T("الطقس", "Temprature ")} />

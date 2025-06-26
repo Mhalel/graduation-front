@@ -72,7 +72,7 @@ function App() {
   // useEffect(() => {
   //   const interval = setInterval(() => {
   //     ranmizeData();
-  //   }, 60 * 100); // كل دقيقة
+  //   }, 60 * 10); // كل دقيقة
 
   //   return () => clearInterval(interval); // تنظيف عند إزالة المكون
   // }, []);
@@ -92,7 +92,7 @@ function App() {
               <Route path="signup" element={<Signup />} />
             </>
           )}
-          {auth && <Route path="Profile/:id" element={<ProfilePage />} />}
+          {/* {auth && <Route path="Profile/:id" element={<ProfilePage />} />} */}
         </Route>
         {auth && (
           <Route path="/dashboard" element={<DashBoard />}>

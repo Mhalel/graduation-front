@@ -1,4 +1,11 @@
-import { Calendar, ChartPie, Home, Inbox, Search, Settings } from "lucide-react";
+import {
+  Calendar,
+  ChartPie,
+  Home,
+  Inbox,
+  Search,
+  Settings,
+} from "lucide-react";
 import { BsFillCalculatorFill } from "react-icons/bs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { FaChartArea } from "react-icons/fa6";
@@ -28,7 +35,7 @@ const items = [
   {
     title: { ar: "الرسمات البيانيه في الوقت الفعلي ", en: "Real-time Charts" },
     url: "charts",
-    icon: ChartPie ,
+    icon: ChartPie,
   },
   {
     title: { ar: "الرسمات البيانيه التراكميه ", en: "Long-term Charts" },
@@ -51,13 +58,12 @@ const items = [
   //   icon: IoGameController,
   // },
   {
-    title:  { ar: "الاعدادات", en: "sittings" },
+    title: { ar: "الاعدادات", en: "sittings" },
     url: "sittings",
     icon: Settings,
   },
 ];
 const gender = "male";
-const photo = "/Ahmed.jpg";
 export function AppSidebar() {
   const T = useT();
   const { account } = useAuth();
@@ -66,15 +72,12 @@ export function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="flex items-center gap-5">
-            <Link
-              to={`/Profile/${account?._id}`}
-              className="flex items-center gap-5"
-            >
+            <div className="flex items-center gap-5">
               <Avatar>
                 <AvatarImage
                   src={
-                    photo
-                      ? photo
+                    account?.photoLink
+                      ? account?.photoLink
                       : gender === "male"
                       ? "/manAvatar.jpg"
                       : gender === "female"
@@ -87,7 +90,7 @@ export function AppSidebar() {
                 </AvatarFallback>
               </Avatar>
               <span className="text-sm font-medium">{account?.userName}</span>
-            </Link>
+            </div>
           </SidebarGroupLabel>
           <SidebarGroupContent className="mt-5">
             <SidebarMenu>

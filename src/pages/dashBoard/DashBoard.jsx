@@ -1,4 +1,4 @@
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
@@ -18,8 +18,12 @@ import { Globe, Moon, Sun } from "lucide-react";
 import { useTheme } from "@/hooks/themeprovider";
 import { useState } from "react";
 import { useLang } from "@/hooks/LangContext";
+import { GiGreenhouse } from "react-icons/gi";
+import { LuLogOut } from "react-icons/lu";
+import { useAuth } from "@/hooks/AuthContext";
 
 export default function DashBoard() {
+  const {logout} = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
   const { lang, setLang } = useLang();
@@ -43,18 +47,21 @@ export default function DashBoard() {
       />
       <SidebarInset>
         <header className="flex  h-16 shrink-0 items-center border-y gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
+          <div className="flex w-full items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 h-4" />
-            <Breadcrumb>
+            <Breadcrumb className="flex w-full items-center space-x-2 justify-between">
               <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
+                <BreadcrumbItem className="block">
+                  <Link to="/" className="flex items-center space-x-2">
+                    <GiGreenhouse size={30} color="white" />
+                  </Link>
+                </BreadcrumbItem>
+                <BreadcrumbItem className=" block">
                   <button
                     onClick={toggleTheme}
-                    className={`p-3 rounded-lg border transition-all duration-200 ${
-                      isDark
-                        ? "border-gray-700 bg-gray-800 hover:bg-gray-700 text-yellow-400"
-                        : "border-gray-300 bg-white hover:bg-gray-50 text-gray-600"
+                    className={`p-3 rounded-lg  transition-all duration-200 ${
+                      isDark ? "   text-yellow-400" : " text-gray-600"
                     }`}
                   >
                     {isDark ? (
@@ -93,6 +100,18 @@ export default function DashBoard() {
                     )}
                   </div>
                 </BreadcrumbItem>
+              </BreadcrumbList>
+              <BreadcrumbList>
+                <button
+                  onClick={() => {
+                    logout();
+                  }}
+                  className={`text-foreground ${
+                    lang === "ar" ? "rotate-180" : ""
+                  }`}
+                >
+                  <LuLogOut />
+                </button>
               </BreadcrumbList>
             </Breadcrumb>
           </div>

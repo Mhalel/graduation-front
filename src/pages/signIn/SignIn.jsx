@@ -44,7 +44,7 @@ const Signin = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: "" });
   };
-
+  
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validate()) {

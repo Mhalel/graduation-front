@@ -14,7 +14,6 @@ import {
 import GreenhouseScene from "./Greenhouse";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/AuthContext";
-import ImageToBase64Uploader from "./ImageToBase64Uploader";
 
 const LandingPage = () => {
   const { auth } = useAuth();
@@ -22,7 +21,6 @@ const LandingPage = () => {
     <div className="">
       <GreenhouseScene />
       <div className="min-h-screen bg-background">
-      <ImageToBase64Uploader />
         <div>
 
         </div>
