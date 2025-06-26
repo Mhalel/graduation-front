@@ -6,7 +6,7 @@ import { useTheme } from "@/hooks/themeprovider";
 import { useAuth } from "@/hooks/AuthContext";
 import { LuLogOut } from "react-icons/lu";
 import Notifications from "../Notifications";
-import MobilePopUp from "./components/mobilePopUp";
+import MobilePopUp from "./components/MobilePopUp";
 import { GiGreenhouse } from "react-icons/gi";
 const Header = () => {
   const { account, auth, logout } = useAuth();

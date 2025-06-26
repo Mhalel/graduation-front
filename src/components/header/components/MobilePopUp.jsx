@@ -1,7 +1,7 @@
 import Notifications from "@/components/Notifications";
 import { useAuth } from "@/hooks/AuthContext";
 import { useLang, useT } from "@/hooks/LangContext";
-import { Bell, User } from "lucide-react";
+import { Bell } from "lucide-react";
 import { useEffect, useState } from "react";
 import { LuLogOut } from "react-icons/lu";
 import { Link, useNavigate } from "react-router-dom";
