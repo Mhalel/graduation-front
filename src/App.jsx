@@ -5,7 +5,7 @@ import NoPage from "./pages/noFound/NoPage";
 import Signin from "./pages/signIn/SignIn";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Signup from "./pages/signUp/SignUp";
-import PageTitleUpdater from "./PageTitleUpdater";
+// import PageTitleUpdater from "./PageTitleUpdater";
 import Accounts from "./pages/dashBoard/accounts/Accounts";
 import ChartPage from "./pages/dashBoard/ChartsPage/ChartPage";
 import ProfilePage from "./pages/ProfilePage/Profile";
