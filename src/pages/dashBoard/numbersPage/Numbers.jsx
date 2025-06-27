@@ -113,7 +113,7 @@ const Numbers = () => {
   return (
     <div
       className={`min-h-screen transition-colors duration-300 ${
-        isDark ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"
+        isDark ? " text-white" : "bg-gray-50 text-gray-900"
       }`}
     >
       <div className="max-w-7xl mx-auto p-6">

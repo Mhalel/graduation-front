@@ -4,12 +4,14 @@ import Readings from "@/Apis/GreenHouseRequsts";
 import { useAuth } from "@/hooks/AuthContext";
 import { useT } from "@/hooks/LangContext";
 import { useSnackbar } from "@/hooks/SnackBar";
+import { useTheme } from "@/hooks/themeprovider";
 import { useState } from "react";
 import { FaS, FaSpinner } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 
 const Signin = () => {
   const [loading, setLoading] = useState(false);
+  const { isDark } = useTheme();
   const nav = useNavigate();
   const T = useT();
   const { openSnackbar } = useSnackbar();
@@ -44,7 +46,7 @@ const Signin = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: "" });
   };
-  
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validate()) {
@@ -107,19 +109,23 @@ const Signin = () => {
         });
     }
   };
-
+  
   return (
-    <div className="w-full text-black min-h-screen flex justify-center items-center">
+    <div className={`w-full ${isDark?"text-white":"text-black"} min-h-screen flex justify-center items-center`}>
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md flex flex-col gap-6"
+        className={`${
+          isDark ? "bg-zinc-900" : "bg-white"
+        } p-8 rounded-lg shadow-lg w-full max-w-md flex flex-col gap-6`}
       >
         <h2 className="text-xl font-bold text-center">
           {T("تسجيل الدخول", "Sign In")}
         </h2>
 
         <label className="flex flex-col gap-1">
-          <span className="text-gray-700 font-medium">
+          <span className={`${
+                isDark ? "text-white" : "text-gray-700"
+              } font-medium`}>
             {T("البريد إلكتروني", "Email")}
           </span>
           <input
@@ -138,7 +144,9 @@ const Signin = () => {
         </label>
 
         <label className="flex flex-col gap-1">
-          <span className="text-gray-700 font-medium">
+          <span className={`${
+                isDark ? "text-white" : "text-gray-700"
+              } font-medium`}>
             {T("كلمه السر", "Password")}
           </span>
           <input

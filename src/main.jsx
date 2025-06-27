@@ -23,11 +23,11 @@ createRoot(document.getElementById("root")).render(
               <PopupProvider>
                 <ThemeProvider>
                   {/* <HelmetProvider> */}
-                    <MessagesSupportProvider>
-                      <FileProvider>
-                        <App />
-                      </FileProvider>
-                    </MessagesSupportProvider>
+                  <MessagesSupportProvider>
+                    <FileProvider>
+                      <App />
+                    </FileProvider>
+                  </MessagesSupportProvider>
                   {/* </HelmetProvider> */}
                 </ThemeProvider>
               </PopupProvider>

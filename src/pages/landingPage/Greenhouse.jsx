@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Plane } from "@react-three/drei";
 import * as THREE from "three";
+// import { three } from "maath";
 
 // Improved glass material with better transparency
 const GlassMaterial = new THREE.MeshPhysicalMaterial({
@@ -54,6 +55,7 @@ const OpenableElement = ({ position, rotation, isWindow, width, height }) => {
             opacity={isWindow ? 1 : 1}
             metalness={isWindow ? 0.2 : 0}
             roughness={0.3}
+
           />
         </mesh>
         {!isWindow && (
@@ -297,14 +299,14 @@ const GreenhouseModel = () => {
   return (
     <group>
       {/* Ground with texture */}
-      <Plane args={[25, 25]} rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.05, 0]}>
-        <meshStandardMaterial color="#3c7a3d" roughness={0.9} />
+      <Plane args={[100, 100]} rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.05, 0]}>
+        <meshStandardMaterial color="#3c7a3d" side={THREE.DoubleSide} roughness={0.9} />
       </Plane>
 
       {/* Greenhouse Base */}
       <mesh position={[0, 0, 0]}>
         <boxGeometry args={[7, 0.1, 5]} />
-        <meshStandardMaterial color="#888888" metalness={0.2} roughness={0.8} />
+        <meshStandardMaterial color="#888888" metalness={0.2} side={THREE.DoubleSide} roughness={0.8} />
       </mesh>
 
       {/* Frame structure - vertical pillars */}
@@ -347,10 +349,10 @@ const GreenhouseModel = () => {
 
       {/* Door - front center */}
       <OpenableElement 
-        position={[0, 0, 2.45]} 
-        rotation={[0, Math.PI, 0]} 
+        position={[-0.9, 1.86/2, 2.45]} 
+        rotation={[0, 0, 0]} 
         isWindow={false}
-        width={1.5}
+        width={1.8}
         height={1.8}
       />
 
@@ -365,14 +367,14 @@ const GreenhouseModel = () => {
 
       {/* Triangular roof - A-frame */}
       {/* Triangle ends */}
-      {[2.45, -2.45].map((z, idx) => (
-        <mesh key={`roof-end-${idx}`} position={[0, 2, z]} material={GlassMaterial}>
-          <bufferGeometry>
+      {[3.46, -3.46].map((x, idx) => (
+        <mesh key={`roof-end-${idx}`} position={[x, 2, 0]} scale={[0.68,1,1]} rotation={[0,Math.PI/2,0]} material={GlassMaterial}>
+          {/* <bufferGeometry>
             <bufferAttribute
               attach="attributes-position"
               count={3}
               array={new Float32Array([-3.5, 0, 0, 3.5, 0, 0, 0, 1.5, 0])}
-              itemSize={3}
+              itemSize={2}
             />
             <bufferAttribute
               attach="attributes-normal"
@@ -380,15 +382,15 @@ const GreenhouseModel = () => {
               array={new Float32Array([0, 0, 1, 0, 0, 1, 0, 0, 1])}
               itemSize={3}
             />
-          </bufferGeometry>
+          </bufferGeometry> */}
         </mesh>
       ))}
       
       {/* Roof sides */}
-      <mesh position={[0, 2.75, 0]} rotation={[-Math.PI/3.2, 0, 0]} material={GlassMaterial}>
+      <mesh position={[0, 2.75, 1.2]} rotation={[-Math.PI/3.2, 0, 0]} material={GlassMaterial}>
         <planeGeometry args={[7, 2.9]} />
       </mesh>
-      <mesh position={[0, 2.75, 0]} rotation={[Math.PI/3.2, 0, 0]} material={GlassMaterial}>
+      <mesh position={[0, 2.75, -1.2]} rotation={[Math.PI/3.2, 0, 0]} material={GlassMaterial}>
         <planeGeometry args={[7, 2.9]} />
       </mesh>
 
@@ -399,15 +401,15 @@ const GreenhouseModel = () => {
       </mesh>
 
       {/* Roof vertical supports */}
-      {[-3, -2, -1, 0, 1, 2, 3].map((x) => (
-        <mesh key={`roof-support-${x}`} position={[x, 2.75, 0]}>
-          <boxGeometry args={[0.06, 1.7, 0.06]} />
+      {/* {[-3, -2, -1, 0, 1, 2, 3].map((x) => (
+        <mesh key={`roof-support-${x}`} position={[x, 1.8, 0]}>
+          <boxGeometry args={[0.06, 3.3, 0.06]} />
           <primitive object={FrameMaterial} attach="material" />
         </mesh>
-      ))}
+      ))} */}
 
       {/* Single large pot with three lettuce plants */}
-      <LargePotWithPlants position={[0, 0, 0]} />
+      <LargePotWithPlants position={[0, 0, -1]} />
 
       {/* Moving Robot Car */}
       <MovingRobotCar />
@@ -421,10 +423,10 @@ const GreenhouseScene = () => {
     <div style={{ height: "70vh", width: "100%" }}>
       <Canvas camera={{ position: [8, 5, 8], fov: 50 }}>
         <color attach="background" args={["#87CEEB"]} />
-        <fog attach="fog" args={["#f0f0f0", 10, 30]} />
+        {/* <fog attach="fog" args={["#f0f0f0", 10, 30]} /> */}
         <ambientLight intensity={0.6} />
         <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
-        <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} />
+        <OrbitControls enablePan={true} maxDistance={12} minDistance={6} maxPolarAngle={Math.PI/2.5} enableZoom={true} enableRotate={true} />
         <GreenhouseModel />
       </Canvas>
     </div>

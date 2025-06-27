@@ -1,7 +1,7 @@
 export const Card = ({ isDark = "dark", type, data, isActive, onClick }) => {
   console.log("isDark", isDark);
-  const baseClasses = `rounded-lg border transition-all duration-200 ${
-    isDark ? " border-gray-300 " : " border-gray-300 bg-white"
+  const baseClasses = `rounded-lg border  transition-all duration-200 ${
+    isDark ? "  " : " border-gray-300 bg-white"
   }`;
 
   if (type === "stat") {

@@ -1,4 +1,4 @@
-import * as echarts from 'echarts';
+import * as echarts from "echarts";
 import {
   LineChart,
   Line,
@@ -53,11 +53,6 @@ export default function ChartPage() {
   const { lang } = useLang();
   const T = useT();
   const { realTimeReading } = useSocket();
-
-  // Random boolean
-  // Send every 10 seconds
-
-  // Send every 10 seconds
 
   const [lastReading, setLastReading] = useState(defaultReading);
 
@@ -122,11 +117,10 @@ export default function ChartPage() {
 
   return (
     <div dir={lang === "ar" ? "rtl" : "ltr"} className="p-5">
-      <h1>{T("مخططات الطقس", "weather Charts")}</h1>
       {/* <MqttSender /> */}
       <div className="flex flex-wrap justify-center items-center  p-5 gap-20 ">
         <aside className="">
-          <TempratureChart value={eTemp} title={T("الطقس", "Temprature ")} />
+          <TempratureChart range = {[0, 10, 20, 25, 30, 40]} value={eTemp} title={T("الطقس", "Temprature ")} />
         </aside>
         <aside className="">
           <HumidityChart value={humidity} title={T("الرطوبه", "humedity")} />
@@ -135,15 +129,16 @@ export default function ChartPage() {
           <PresureChart value={pressure} title={T("الضغط الجوي", "pressure")} />
         </aside>
         <aside className="">
-          <MCUtemp
-            
-            cTemp={cTemp}
-            text={lang === "ar" ? "درجه حراره المعالج" : "MCU temprature"}
+          <TempratureChart
+            value={cTemp}
+            range={[0, 10, 30.5, 45, 65]}
+            title={lang === "ar" ? "درجه حراره المعالج" : "MCU temprature"}
           />
         </aside>
         <aside className="">
           <TempratureChart
             value={s1Temp}
+            range={[0, 10, 18, 24, 30]}
             title={T(" درجه الحراره التربه الاولي", "Temprature in planet1")}
             unit={"ºC"}
           />
@@ -151,6 +146,7 @@ export default function ChartPage() {
         <aside className="">
           <TempratureChart
             value={s1Moisture}
+            range={[0, 20, 35, 60, 80]}
             title={T("رطوبه التربه الاولي", "Moisture in planet1")}
             unit={"%"}
           />
@@ -158,6 +154,7 @@ export default function ChartPage() {
 
         <aside className="">
           <TempratureChart
+            range={[0, 10, 18, 24, 30]}
             value={s2Temp}
             title={T("ال درجه الحراره التربه الاولي", "Temprature in planet2")}
             unit={"ºC"}
@@ -165,6 +162,7 @@ export default function ChartPage() {
         </aside>
         <aside className="">
           <TempratureChart
+            range={[0, 20, 35, 60, 80]}
             value={s2Moisture}
             title={T("رطوبه التربه التربه الاولي", "Moisture in planet2")}
             unit={"%"}
@@ -175,7 +173,12 @@ export default function ChartPage() {
   );
 }
 
-const TempratureChart = ({ title = "", value = 0, unit = "ºC" }) => {
+const TempratureChart = ({
+  range = [0, 10, 30.5, 45, 65], // [min, startOptimal, endOptimal, startHigh, startCritical]
+  title = "",
+  value = 0,
+  unit = "ºC",
+}) => {
   return (
     <div className="">
       <GaugeComponent
@@ -185,77 +188,40 @@ const TempratureChart = ({ title = "", value = 0, unit = "ºC" }) => {
           padding: 0.005,
           cornerRadius: 0.1,
           gradient: true,
-
-
-     subArcs: [
-          {
-            limit: 20,
-            color: "#5BE12C", // أخضر: آمن
-            showTick: true,
-             tooltip: {
-                text: "Too low temperature!",
+          subArcs: [
+            {
+              limit: range[1],
+              color: "#5BE12C", // أزرق فاتح: بارد جدًا
+              showTick: true,
+              tooltip: {
+                text: "Too cold!",
               },
-          },
-          {
-            limit: 35,
-            color: "#F5CD19", // أصفر: تحذير
-            showTick: true,
-            tooltip: {
-                text: "Low temperature!",
+            },
+            {
+              limit: range[2],
+              color: "#5BE12C", // أخضر: معتدل
+              showTick: true,
+              tooltip: {
+                text: "Optimal temperature",
               },
-          },
-          {
-            limit: 45,
-            color: "#FF8C00",// أحمر: خطر
-            showTick: true,
-          },
-          {
-            limit: 55,
-            color: "#990000",// أحمر: خطر
-            showTick: true,
-          },
-        ],
-
-          // subArcs: [
-          //   {
-          //     limit: 15,
-          //     color: "#EA4228",
-          //     showTick: true,
-          //     tooltip: {
-          //       text: "Too low temperature!",
-          //     },
-          //   },
-          //   {
-          //     limit: 17,
-          //     color: "#F5CD19",
-          //     showTick: true,
-          //     tooltip: {
-          //       text: "Low temperature!",
-          //     },
-          //   },
-          //   {
-          //     limit: 28,
-          //     color: "#5BE12C",
-          //     showTick: true,
-          //     tooltip: {
-          //       text: "OK temperature!",
-          //     },
-          //   },
-          //   {
-          //     limit: 30,
-          //     color: "#F5CD19",
-          //     showTick: true,
-          //     tooltip: {
-          //       text: "High temperature!",
-          //     },
-          //   },
-          //   {
-          //     color: "#EA4228",
-          //     tooltip: {
-          //       text: "Too high temperature!",
-          //     },
-          //   },
-          // ],
+            },
+            {
+              limit: range[3],
+              color: "#F5CD19", // أصفر: حرارة مرتفعة
+              showTick: true,
+              tooltip: {
+                text: "High temperature!",
+              },
+            },
+            {
+              limit: range[4],
+              color: "#FF4C4C", // أحمر فاتح: خطر شديد
+              showTick: true,
+              tooltip: {
+                text: "Critical temperature!",
+              },
+            },
+          ],
         }}
         pointer={{
           color: "#345243",
@@ -271,12 +237,17 @@ const TempratureChart = ({ title = "", value = 0, unit = "ºC" }) => {
               formatTextValue: (value) => value + unit,
               style: { fontSize: 10 },
             },
-            ticks: [{ value: 13 }, { value: 22.5 }, { value: 32 }],
+            ticks: [
+              { value: range[1] },
+              { value: range[2] },
+              { value: range[3] },
+              { value: range[4] },
+            ],
           },
         }}
         value={value}
-        minValue={0}
-        maxValue={60}
+        minValue={range[0]}
+        maxValue={range[4]}
       />
       <div className="text-center">{title}</div>
     </div>
@@ -290,23 +261,28 @@ const HumidityChart = ({ title = "", value = 0 }) => {
         arc={{
           subArcs: [
             {
-              limit: 20,
-              color: "#EA4228",
+              limit: 30,
+              color: "#66CCFF", // أزرق: ممتاز جدًا (0-30%)
               showTick: true,
             },
             {
-              limit: 40,
-              color: "#F58B19",
+              limit: 55,
+              color: "#5BE12C", // أخضر: آمن (30-45%)
               showTick: true,
             },
             {
-              limit: 60,
-              color: "#F5CD19",
+              limit: 70,
+              color: "#F5CD19", // أصفر: بداية الخطر (45-60%)
               showTick: true,
             },
             {
-              limit: 100,
-              color: "#5BE12C",
+              limit: 80,
+              color: "#FF8C00", // برتقالي: خطر مرتفع (60-70%)
+              showTick: true,
+            },
+            {
+              limit: 90,
+              color: "#FF4C4C", // أحمر: خطر شديد جدًا (70-80%)
               showTick: true,
             },
           ],
@@ -379,12 +355,12 @@ const MCUtemp = ({ cTemp = 100, text }) => (
           },
           {
             limit: 45,
-            color: "#FF8C00",// أحمر: خطر
+            color: "#FF8C00", // أحمر: خطر
             showTick: true,
           },
           {
             limit: 55,
-            color: "#990000",// أحمر: خطر
+            color: "#990000", // أحمر: خطر
             showTick: true,
           },
         ],
@@ -399,7 +375,3 @@ const MCUtemp = ({ cTemp = 100, text }) => (
     <p>{text}</p>
   </div>
 );
-
-
-
-

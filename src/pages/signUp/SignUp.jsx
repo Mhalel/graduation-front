@@ -1,14 +1,19 @@
 import AuthApi from "@/Apis/Auth";
 import { useAuth } from "@/hooks/AuthContext";
+import { useFileUploader } from "@/hooks/FileProvider";
 import { useT } from "@/hooks/LangContext";
 import { useSnackbar } from "@/hooks/SnackBar";
-import { useState } from "react";
+import { useTheme } from "@/hooks/themeprovider";
+import { Camera, User } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
   const T = useT();
   const [loading, setLoading] = useState(false);
+  const [dragOv, setDragOv] = useState(false);
+  const { isDark } = useTheme();
   const { updateUser, logout, setToken, setAccount, account, setAuth, auth } =
     useAuth();
   const [errors, setErrors] = useState({});
@@ -19,6 +24,7 @@ const Signup = () => {
     phone: "",
     gender: "",
     password: "",
+    photoLink: "",
   });
 
   const { openSnackbar } = useSnackbar();
@@ -157,29 +163,91 @@ const Signup = () => {
     }
   };
 
+  const fileInputRef = useRef();
+
+  const { imagePreview, handleFileChange } = useFileUploader();
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith("image/")) {
+      handleFileChange(file);
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setDragOv(true);
+  };
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setDragOv(false);
+  };
+
+  const preview = imagePreview;
+  useEffect(() => {
+    setFormData((prev) => ({ ...prev, photoLink: imagePreview }));
+  }, [imagePreview]);
   return (
     <div
       dir={T("rtl", "ltr")}
-      className="w-full my-10 text-black min-h-screen flex justify-center items-center"
+      className={`w-full my-10 ${
+        isDark ? "text-white" : "text-black"
+      } min-h-screen flex justify-center items-center`}
     >
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md flex flex-col gap-6"
+        className={`${
+          isDark ? "bg-zinc-900" : "bg-white"
+        } p-8 rounded-lg shadow-lg w-full max-w-md  flex flex-col gap-6`}
       >
         <h2 className="text-xl font-bold text-center">
           {T("انشاء حساب", "Sign Up")}
         </h2>
-
+        <div className="relative">
+          <div
+            className={`w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center overflow-hidden cursor-pointer border-2 border-dashed ${
+              dragOv && "border-blue-400"
+            } transition`}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onClick={() => fileInputRef.current.click()}
+          >
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => handleFileChange(e.target.files[0])}
+            />
+            {preview ? (
+              <img
+                src={preview}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <User className="w-8 h-8 text-primary" />
+            )}
+          </div>
+        </div>
         {inputFields.map((field, i) => (
           <label key={i} className="flex flex-col gap-1">
-            <span className="text-gray-700 font-medium">{field.label}</span>
+            <span
+              className={`${
+                isDark ? "text-white" : "text-gray-700"
+              } font-medium`}
+            >
+              {field.label}
+            </span>
 
             {field.type === "select" ? (
               <select
                 name={field.name}
                 value={formData[field.name] || ""}
                 onChange={handleChange}
-                className={`rounded-md border px-3 py-2 text-sm ${
+                className={`rounded-md text-black border px-3 py-2 text-sm ${
                   errors[field.name] ? "border-red-500" : "border-gray-300"
                 }`}
                 aria-invalid={!!errors[field.name]}
@@ -199,7 +267,7 @@ const Signup = () => {
                 name={field.name}
                 value={formData[field.name] || ""}
                 onChange={handleChange}
-                className={`p-2 border rounded-md ${
+                className={`p-2 border rounded-md text-black ${
                   errors[field.name] ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder={field.placeholder}

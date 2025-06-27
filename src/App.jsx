@@ -23,10 +23,13 @@ import { useSocket } from "./hooks/SensorReadings";
 import axios from "axios";
 import LongTermCharts from "./pages/dashBoard/LongTermCharts/LongTermCharts";
 import Sittings from "./pages/dashBoard/Sittings/Sittings";
+import ClickSpark from "./reactBits/ClickSpark";
+import { useTheme } from "./hooks/themeprovider";
 
 function App() {
   const { auth } = useAuth();
   const { realTimeReading, readings, socket } = useSocket();
+  const { isDark } = useTheme();
   const randBool = () => Math.random() > 0.5;
 
   // Random number from 0 to 100
@@ -59,8 +62,8 @@ function App() {
     const data = generateRandomData();
     try {
       const res = await axios.post(
-        // "https://grad-back-production.up.railway.app/api/v1/readings/readings",
-        "http://localhost:7000/api/v1/readings/readings",
+        "https://grad-back-production.up.railway.app/api/v1/readings/readings",
+        // "http://localhost:7000/api/v1/readings/readings",
         data
       );
       console.log("✅ Sent at", new Date().toLocaleTimeString(), data);
@@ -80,36 +83,38 @@ function App() {
   //   console.log("realTimeReading", realTimeReading);
   // }, [realTimeReading]);
   return (
-    <div>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<LandingPage />} />
-          <Route path="comp" element={<EComp />} />
-          <Route path="Pricing" element={<PricingPage />} />
-          {!auth && (
-            <>
-              <Route path="signin" element={<Signin />} />
-              <Route path="signup" element={<Signup />} />
-            </>
-          )}
-          {/* {auth && <Route path="Profile/:id" element={<ProfilePage />} />} */}
-        </Route>
-        {auth && (
-          <Route path="/dashboard" element={<DashBoard />}>
-            <Route index element={<Navigate to="numbers" />} />
-            <Route path="numbers" element={<Numbers />} />
-            <Route path="charts" element={<ChartPage />} />
-            <Route path="long-term-charts" element={<LongTermCharts />} />
-            <Route path="sittings" element={<Sittings />} />
-            <Route path="account" element={<Accounts />} />
-            <Route path="control" element={<Controls />} />
-            <Route path="Support" element={<Messanger />} />
+    <ClickSpark sparkColor={isDark ? "#ffff" : "#000000"}>
+      <div>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<LandingPage />} />
+            <Route path="comp" element={<EComp />} />
+            {/* <Route path="Pricing" element={<PricingPage />} /> */}
+            {!auth && (
+              <>
+                <Route path="signin" element={<Signin />} />
+                <Route path="signup" element={<Signup />} />
+              </>
+            )}
+            {/* {auth && <Route path="Profile/:id" element={<ProfilePage />} />} */}
           </Route>
-        )}
-        <Route path="*" element={<NoPage />} />
-      </Routes>
-      <SupportPart />
-    </div>
+          {auth && (
+            <Route path="/dashboard" element={<DashBoard />}>
+              <Route index element={<Navigate to="numbers" />} />
+              <Route path="numbers" element={<Numbers />} />
+              <Route path="charts" element={<ChartPage />} />
+              <Route path="long-term-charts" element={<LongTermCharts />} />
+              <Route path="sittings" element={<Sittings />} />
+              <Route path="account" element={<Accounts />} />
+              <Route path="control" element={<Controls />} />
+              <Route path="Support" element={<Messanger />} />
+            </Route>
+          )}
+          <Route path="*" element={<NoPage />} />
+        </Routes>
+        <SupportPart />
+      </div>
+    </ClickSpark>
   );
 }
 
