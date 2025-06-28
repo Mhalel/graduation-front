@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Check,
   ChevronDown,
@@ -22,13 +22,46 @@ import BlurText from "@/reactBits/BlurText";
 import { useAnimation, useInView, motion } from "framer-motion";
 
 const LandingPage = () => {
-  const T = useT();
+  const [size, setSize] = useState(() => {
+    return window.matchMedia("(max-width: 1024px)").matches ? "small" : "big";
+  });
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 1024px)");
+
+    const updateSize = () => {
+      const newSize = mq.matches ? "small" : "big";
+      setSize(newSize);
+    };
+
+    updateSize();
+
+    mq.addEventListener("change", updateSize);
+
+    return () => {
+      mq.removeEventListener("change", updateSize);
+    };
+  }, []);
+  useEffect(() => {
+    console.log("size", size);
+  }, [size]);
+
   return (
     <div className="">
       <div className="min-h-screen bg-background">
         <HeroSection />
-        <div style={{ width: "100%", height: "450px", position: "relative" }}>
-          <Threads amplitude={2} distance={0} enableMouseInteraction={true} />
+        <div
+          style={{
+            width: "100%",
+            height: size === "small" ? "300px" : "450px",
+            position: "relative",
+          }}
+        >
+          <Threads
+            amplitude={2}
+            distance={0}
+            enableMouseInteraction={size === "small" ? false : true}
+          />
         </div>
         <ComponentsSection />
         <SystemArcSection />
@@ -95,25 +128,20 @@ const HeroSection = () => {
                 className=" mb-8"
               />
             </h1>
-            <p
+            <motion.p
               dir={T("rtl", "ltr")}
-              className=" text-lg text-muted-foreground sm:block hidden mb-8 max-w-[540px]"
+              className=" text-lg break-words text-muted-foreground sm:block hidden mb-8 max-w-[540px]"
+              ref={ref}
+              initial="hidden "
+              animate={controls}
+              variants={containerVariants}
             >
-              <motion.div
-                ref={ref}
-                initial="hidden"
-                animate={controls}
-                variants={containerVariants}
-                className="break-words "
-                dir={isArabic ? "rtl" : "ltr"}
-              >
-                {letters.map((char, index) => (
-                  <motion.span key={index} variants={letterVariants}>
-                    {char === " " ? "\u00A0" : char}
-                  </motion.span>
-                ))}
-              </motion.div>
-            </p>
+              {letters.map((char, index) => (
+                <motion.span key={index} variants={letterVariants}>
+                  {char === " " ? "\u00A0" : char}
+                </motion.span>
+              ))}
+            </motion.p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 to={auth ? "/dashboard/charts" : "/signIn"}
@@ -541,7 +569,7 @@ const SystemArcSection = () => {
             </div>
           </div>
 
-          <div className="md:w-1/2">
+          <div className="w-full md:w-1/2">
             <div className="bg-muted p-6 rounded-lg border border-border">
               <h3 className="font-medium mb-4 text-center">
                 {T("تفصيل مكونات النظام", "System Component Breakdown")}
