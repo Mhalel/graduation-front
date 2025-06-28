@@ -186,7 +186,7 @@ export const SnackbarProvider = ({ children }) => {
       <AnimatePresence>
         {snackbarOpen && (
           <motion.div
-            className={`fixed top-44 z-[99999] max-w-[400px] ${
+            className={`fixed top-44 z-[999999999999999999999999999999999] max-w-[400px] ${
               lang === "ar" ? "left-10" : "right-10"
             } mx-auto w-fit rounded-lg ${getTypeStyles(
               snackbarType

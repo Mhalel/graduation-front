@@ -131,3 +131,12 @@
   right: 0;
   left: auto;
 }
+
+input::-ms-reveal,
+input::-ms-clear,
+input::-webkit-contacts-auto-fill-button,
+input::-webkit-credentials-auto-fill-button,
+input::-webkit-clear-button {
+  display: none !important;
+  -webkit-appearance: none;
+}

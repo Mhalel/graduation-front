@@ -22,13 +22,11 @@ createRoot(document.getElementById("root")).render(
             <SnackbarProvider>
               <PopupProvider>
                 <ThemeProvider>
-                  {/* <HelmetProvider> */}
                   <MessagesSupportProvider>
                     <FileProvider>
                       <App />
                     </FileProvider>
                   </MessagesSupportProvider>
-                  {/* </HelmetProvider> */}
                 </ThemeProvider>
               </PopupProvider>
             </SnackbarProvider>

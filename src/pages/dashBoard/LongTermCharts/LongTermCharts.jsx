@@ -63,7 +63,7 @@ const Formatter = (values = [], sortedReadings) => {
 
     if (
       !lastAcceptedTime ||
-      currentTime - lastAcceptedTime >= 60 * 60  // 30 دقيقة بالميلي ثانية
+      currentTime - lastAcceptedTime >= 0 // 30 دقيقة بالميلي ثانية
     ) {
       filteredReadings.push(reading);
       lastAcceptedTime = currentTime;

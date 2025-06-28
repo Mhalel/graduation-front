@@ -19,7 +19,7 @@ const GlassMaterial = new THREE.MeshPhysicalMaterial({
 const FrameMaterial = new THREE.MeshStandardMaterial({
   color: "#A47449",
   metalness: 0.6,
-  roughness: 0.7
+  roughness: 0.7,
 });
 
 // Door and window component with animation
@@ -27,59 +27,65 @@ const OpenableElement = ({ position, rotation, isWindow, width, height }) => {
   const elementRef = useRef();
   const [isOpen, setIsOpen] = useState(false);
   const size = isWindow ? [width, height, 0.05] : [width, height, 0.05];
-  
+
   // Toggle open/close effect
   useEffect(() => {
-    const interval = setInterval(() => {
-      setIsOpen(prev => !prev);
-    }, isWindow ? 8000 : 12000); // Different timing for window and door
-    
+    const interval = setInterval(
+      () => {
+        setIsOpen((prev) => !prev);
+      },
+      isWindow ? 8000 : 12000
+    ); // Different timing for window and door
+
     return () => clearInterval(interval);
   }, [isWindow]);
-  
+
   useFrame(() => {
     if (!elementRef.current) return;
-    
-    const targetRotation = isOpen ? (isWindow ? Math.PI/4 : Math.PI/2) : 0;
-    elementRef.current.rotation.y += (targetRotation - elementRef.current.rotation.y) * 0.05;
+
+    const targetRotation = isOpen ? (isWindow ? Math.PI / 4 : Math.PI / 2) : 0;
+    elementRef.current.rotation.y +=
+      (targetRotation - elementRef.current.rotation.y) * 0.05;
   });
-  
+
   return (
     <group position={position} rotation={rotation}>
-      <group ref={elementRef} position={[width/2, 0, 0]}>
-        <mesh position={[-width/2, 0, 0]}>
+      <group ref={elementRef} position={[width / 2, 0, 0]}>
+        <mesh position={[-width / 2, 0, 0]}>
           <boxGeometry args={size} />
-          <meshStandardMaterial 
+          <meshStandardMaterial
             color={isWindow ? "#87CEFA" : "#8B4513"}
             transparent={isWindow}
             opacity={isWindow ? 1 : 1}
             metalness={isWindow ? 0.2 : 0}
             roughness={0.3}
-
           />
         </mesh>
         {!isWindow && (
-          <mesh position={[-width/4, 0, 0.03]}>
-            <cylinderGeometry args={[0.04, 0.04, 0.08, 8]} rotation={[Math.PI/2, 0, 0]} />
+          <mesh position={[-width / 4, 0, 0.03]}>
+            <cylinderGeometry
+              args={[0.04, 0.04, 0.08, 8]}
+              rotation={[Math.PI / 2, 0, 0]}
+            />
             <meshStandardMaterial color="#FFD700" metalness={0.8} />
           </mesh>
         )}
       </group>
       {/* Frame */}
       <mesh position={[0, 0, 0]}>
-        <boxGeometry args={[0.08, height+0.08, 0.08]} />
+        <boxGeometry args={[0.08, height + 0.08, 0.08]} />
         <primitive object={FrameMaterial} attach="material" />
       </mesh>
       <mesh position={[width, 0, 0]}>
-        <boxGeometry args={[0.08, height+0.08, 0.08]} />
+        <boxGeometry args={[0.08, height + 0.08, 0.08]} />
         <primitive object={FrameMaterial} attach="material" />
       </mesh>
-      <mesh position={[width/2, height/2, 0]}>
-        <boxGeometry args={[width+0.08, 0.08, 0.08]} />
+      <mesh position={[width / 2, height / 2, 0]}>
+        <boxGeometry args={[width + 0.08, 0.08, 0.08]} />
         <primitive object={FrameMaterial} attach="material" />
       </mesh>
-      <mesh position={[width/2, -height/2, 0]}>
-        <boxGeometry args={[width+0.08, 0.08, 0.08]} />
+      <mesh position={[width / 2, -height / 2, 0]}>
+        <boxGeometry args={[width + 0.08, 0.08, 0.08]} />
         <primitive object={FrameMaterial} attach="material" />
       </mesh>
     </group>
@@ -94,38 +100,36 @@ const LettucePlant = ({ position, rotation = [0, 0, 0], scale = 1 }) => (
       <cylinderGeometry args={[0.03, 0.04, 0.1, 8]} />
       <meshStandardMaterial color="#90EE90" />
     </mesh>
-    
+
     {/* Core/Heart */}
     <mesh position={[0, 0.12, 0]}>
       <sphereGeometry args={[0.08, 16, 16]} />
       <meshStandardMaterial color="#7CFC00" roughness={0.7} />
     </mesh>
-    
+
     {/* Leaves - more defined and crisp lettuce leaves */}
     {[...Array(12)].map((_, i) => {
       const angleStep = (Math.PI * 2) / 12;
       const radius = 0.1 + (i % 3) * 0.03;
       const curveAmount = 0.04 + (i % 2) * 0.02;
       const height = 0.02 + (i % 3) * 0.01;
-      
+
       return (
-        <mesh 
-          key={`leaf-${i}`} 
+        <mesh
+          key={`leaf-${i}`}
           position={[
-            Math.sin(i * angleStep) * radius * 0.7, 
-            0.09 + (i % 3) * 0.02, 
-            Math.cos(i * angleStep) * radius
+            Math.sin(i * angleStep) * radius * 0.7,
+            0.09 + (i % 3) * 0.02,
+            Math.cos(i * angleStep) * radius,
           ]}
-          rotation={[
-            Math.PI/2 - curveAmount * 8,
-            i * angleStep, 
-            0
-          ]}
+          rotation={[Math.PI / 2 - curveAmount * 8, i * angleStep, 0]}
         >
           {/* More lettuce-shaped leaves - FIXED: changed cylinderBufferGeometry to cylinderGeometry */}
-          <cylinderGeometry args={[0.12, 0.08, height, 5, 1, false, 0, Math.PI]} />
-          <meshStandardMaterial 
-            color={i % 2 === 0 ? "#90EE90" : "#7CFC00"} 
+          <cylinderGeometry
+            args={[0.12, 0.08, height, 5, 1, false, 0, Math.PI]}
+          />
+          <meshStandardMaterial
+            color={i % 2 === 0 ? "#90EE90" : "#7CFC00"}
             side={THREE.DoubleSide}
             roughness={0.8}
           />
@@ -143,17 +147,21 @@ const LargePotWithPlants = ({ position }) => (
       <cylinderGeometry args={[0.5, 0.4, 0.4, 16]} />
       <meshStandardMaterial color="#8B4513" roughness={0.8} />
     </mesh>
-    
+
     {/* Soil */}
     <mesh position={[0, 0.33, 0]}>
       <cylinderGeometry args={[0.48, 0.48, 0.08, 16]} />
       <meshStandardMaterial color="#3D2817" roughness={1} />
     </mesh>
-    
+
     {/* Three lettuce plants positioned in the pot */}
     <LettucePlant position={[-0.18, 0.36, -0.18]} scale={1.1} />
-    <LettucePlant position={[0.2, 0.36, -0.1]} rotation={[0, Math.PI/3, 0]} scale={0.9} />
-    <LettucePlant position={[0, 0.36, 0.2]} rotation={[0, -Math.PI/4, 0]} />
+    <LettucePlant
+      position={[0.2, 0.36, -0.1]}
+      rotation={[0, Math.PI / 3, 0]}
+      scale={0.9}
+    />
+    <LettucePlant position={[0, 0.36, 0.2]} rotation={[0, -Math.PI / 4, 0]} />
   </group>
 );
 
@@ -173,22 +181,26 @@ const RobotCar = React.forwardRef(({ position, rotation = 0 }, ref) => (
     {/* Wheels - improved with golden centers */}
     {[
       [-0.4, 0.12, 0.2], // front-left
-      [0.4, 0.12, 0.2],  // front-right
+      [0.4, 0.12, 0.2], // front-right
       [-0.4, 0.12, -0.2], // back-left
-      [0.4, 0.12, -0.2]  // back-right
+      [0.4, 0.12, -0.2], // back-right
     ].map((pos, idx) => (
       <group key={`wheel-${idx}`} position={pos}>
         {/* Tire */}
-        <mesh rotation={[Math.PI/2, 0, 1.57]}>
+        <mesh rotation={[Math.PI / 2, 0, 1.57]}>
           <cylinderGeometry args={[0.12, 0.12, 0.05, 16]} />
-          <meshStandardMaterial color="#333333"   roughness={0.8} />
-          
+          <meshStandardMaterial color="#333333" roughness={0.8} />
+
           {/* Gold center hub */}
           <mesh>
             <cylinderGeometry args={[0.06, 0.06, 0.06, 12]} />
-            <meshStandardMaterial color="#FFD700" metalness={0.8} roughness={0.2} />
+            <meshStandardMaterial
+              color="#FFD700"
+              metalness={0.8}
+              roughness={0.2}
+            />
           </mesh>
-          
+
           {/* Spokes */}
           {/* {[...Array(6)].map((_, i) => {
             const angle = (Math.PI * 2 / 6) * i;
@@ -226,7 +238,10 @@ const RobotCar = React.forwardRef(({ position, rotation = 0 }, ref) => (
       </mesh>
       {[-0.07, 0.07].map((x, i) => (
         <mesh key={`eye-${i}`} position={[x, 0, 0.03]}>
-          <cylinderGeometry args={[0.04, 0.04, 0.06, 16]} rotation={[Math.PI/2, 0, 0]} />
+          <cylinderGeometry
+            args={[0.04, 0.04, 0.06, 16]}
+            rotation={[Math.PI / 2, 0, 0]}
+          />
           <meshStandardMaterial color="#FFFFFF" />
         </mesh>
       ))}
@@ -254,9 +269,9 @@ const MovingRobotCar = () => {
   // Path around the greenhouse perimeter
   const positions = [
     { x: -3, z: -2.5, rot: 0 },
-    { x: 3, z: -2.5, rot: Math.PI/2 },
+    { x: 3, z: -2.5, rot: Math.PI / 2 },
     { x: 3, z: 2.5, rot: Math.PI },
-    { x: -3, z: 2.5, rot: 3*Math.PI/2 },
+    { x: -3, z: 2.5, rot: (3 * Math.PI) / 2 },
   ];
 
   const speed = 0.05;
@@ -280,12 +295,12 @@ const MovingRobotCar = () => {
       // Smooth rotation
       const targetRotation = Math.atan2(dx, dz);
       let currentRotation = carRef.current.rotation.y;
-      
+
       // Normalize angle difference
       let diff = targetRotation - currentRotation;
       while (diff > Math.PI) diff -= 2 * Math.PI;
       while (diff < -Math.PI) diff += 2 * Math.PI;
-      
+
       // Apply smooth rotation
       carRef.current.rotation.y += diff * 0.1;
     }
@@ -299,22 +314,35 @@ const GreenhouseModel = () => {
   return (
     <group>
       {/* Ground with texture */}
-      <Plane args={[100, 100]} rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.05, 0]}>
-        <meshStandardMaterial color="#3c7a3d" side={THREE.DoubleSide} roughness={0.9} />
+      <Plane
+        args={[100, 100]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        position={[0, -0.05, 0]}
+      >
+        <meshStandardMaterial
+          color="#3c7a3d"
+          side={THREE.DoubleSide}
+          roughness={0.9}
+        />
       </Plane>
 
       {/* Greenhouse Base */}
       <mesh position={[0, 0, 0]}>
         <boxGeometry args={[7, 0.1, 5]} />
-        <meshStandardMaterial color="#888888" metalness={0.2} side={THREE.DoubleSide} roughness={0.8} />
+        <meshStandardMaterial
+          color="#888888"
+          metalness={0.2}
+          side={THREE.DoubleSide}
+          roughness={0.8}
+        />
       </mesh>
 
       {/* Frame structure - vertical pillars */}
       {[
         [-3.45, 1, -2.45], // back-left
-        [3.45, 1, -2.45],  // back-right
-        [3.45, 1, 2.45],   // front-right
-        [-3.45, 1, 2.45],  // front-left
+        [3.45, 1, -2.45], // back-right
+        [3.45, 1, 2.45], // front-right
+        [-3.45, 1, 2.45], // front-left
       ].map((pos, idx) => (
         <mesh key={`pillar-${idx}`} position={pos}>
           <boxGeometry args={[0.1, 2, 0.1]} />
@@ -330,36 +358,52 @@ const GreenhouseModel = () => {
       <mesh position={[2.6, 1, -2.45]} material={GlassMaterial}>
         <planeGeometry args={[1.7, 2]} />
       </mesh>
-      
+
       {/* Front wall with door space */}
-      <mesh position={[-2.2, 1, 2.45]} rotation={[0, Math.PI, 0]} material={GlassMaterial}>
+      <mesh
+        position={[-2.2, 1, 2.45]}
+        rotation={[0, Math.PI, 0]}
+        material={GlassMaterial}
+      >
         <planeGeometry args={[2.5, 2]} />
       </mesh>
-      <mesh position={[2.2, 1, 2.45]} rotation={[0, Math.PI, 0]} material={GlassMaterial}>
+      <mesh
+        position={[2.2, 1, 2.45]}
+        rotation={[0, Math.PI, 0]}
+        material={GlassMaterial}
+      >
         <planeGeometry args={[2.5, 2]} />
       </mesh>
-      
+
       {/* Side walls */}
-      <mesh position={[-3.45, 1, 0]} rotation={[0, Math.PI / 2, 0]} material={GlassMaterial}>
+      <mesh
+        position={[-3.45, 1, 0]}
+        rotation={[0, Math.PI / 2, 0]}
+        material={GlassMaterial}
+      >
         <planeGeometry args={[5, 2]} />
       </mesh>
-      <mesh position={[3.45, 1, 0]} rotation={[0, -Math.PI / 2, 0]} material={GlassMaterial}>
+      <mesh
+        position={[3.45, 1, 0]}
+        rotation={[0, -Math.PI / 2, 0]}
+        material={GlassMaterial}
+      >
         <planeGeometry args={[5, 2]} />
       </mesh>
 
       {/* Door - front center */}
-      <OpenableElement 
-        position={[-0.9, 1.86/2, 2.45]} 
-        rotation={[0, 0, 0]} 
+      <OpenableElement
+        position={[-0.9, 1.86 / 2, 2.45]}
+        rotation={[0, 0, 0]}
         isWindow={false}
         width={1.8}
         height={1.8}
       />
 
       {/* Window - on back wall */}
-      <OpenableElement 
-        position={[1.2, 0.5, -2.45]} 
-        rotation={[0, 0, 0]} 
+      <OpenableElement
+        position={[1.2, 0.5, -2.45]}
+        rotation={[0, 0, 0]}
         isWindow={true}
         width={1.0}
         height={1.0}
@@ -368,7 +412,13 @@ const GreenhouseModel = () => {
       {/* Triangular roof - A-frame */}
       {/* Triangle ends */}
       {[3.46, -3.46].map((x, idx) => (
-        <mesh key={`roof-end-${idx}`} position={[x, 2, 0]} scale={[0.68,1,1]} rotation={[0,Math.PI/2,0]} material={GlassMaterial}>
+        <mesh
+          key={`roof-end-${idx}`}
+          position={[x, 2, 0]}
+          scale={[0.68, 1, 1]}
+          rotation={[0, Math.PI / 2, 0]}
+          material={GlassMaterial}
+        >
           {/* <bufferGeometry>
             <bufferAttribute
               attach="attributes-position"
@@ -385,12 +435,20 @@ const GreenhouseModel = () => {
           </bufferGeometry> */}
         </mesh>
       ))}
-      
+
       {/* Roof sides */}
-      <mesh position={[0, 2.75, 1.2]} rotation={[-Math.PI/3.2, 0, 0]} material={GlassMaterial}>
+      <mesh
+        position={[0, 2.75, 1.2]}
+        rotation={[-Math.PI / 3.2, 0, 0]}
+        material={GlassMaterial}
+      >
         <planeGeometry args={[7, 2.9]} />
       </mesh>
-      <mesh position={[0, 2.75, -1.2]} rotation={[Math.PI/3.2, 0, 0]} material={GlassMaterial}>
+      <mesh
+        position={[0, 2.75, -1.2]}
+        rotation={[Math.PI / 3.2, 0, 0]}
+        material={GlassMaterial}
+      >
         <planeGeometry args={[7, 2.9]} />
       </mesh>
 
@@ -420,13 +478,20 @@ const GreenhouseModel = () => {
 // Scene wrapper
 const GreenhouseScene = () => {
   return (
-    <div style={{ height: "70vh", width: "100%" }}>
+    <div style={{ height: "91vh", width: "100%" }}>
       <Canvas camera={{ position: [8, 5, 8], fov: 50 }}>
         <color attach="background" args={["#87CEEB"]} />
         {/* <fog attach="fog" args={["#f0f0f0", 10, 30]} /> */}
         <ambientLight intensity={0.6} />
         <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
-        <OrbitControls enablePan={true} maxDistance={12} minDistance={6} maxPolarAngle={Math.PI/2.5} enableZoom={true} enableRotate={true} />
+        <OrbitControls
+          enablePan={true}
+          maxDistance={12}
+          minDistance={6}
+          maxPolarAngle={Math.PI / 2.5}
+          enableZoom={true}
+          enableRotate={true}
+        />
         <GreenhouseModel />
       </Canvas>
     </div>

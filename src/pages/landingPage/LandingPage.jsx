@@ -11,7 +11,6 @@ import {
   ArrowUpRight,
   Globe,
 } from "lucide-react";
-import GreenhouseScene from "./Greenhouse";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/AuthContext";
 
@@ -26,7 +25,6 @@ const LandingPage = () => {
   const T = useT();
   return (
     <div className="">
-      <GreenhouseScene />
       <div className="min-h-screen bg-background">
         <HeroSection />
         <div style={{ width: "100%", height: "450px", position: "relative" }}>
@@ -99,7 +97,7 @@ const HeroSection = () => {
             </h1>
             <p
               dir={T("rtl", "ltr")}
-              className="text-lg text-muted-foreground mb-8 max-w-[540px]"
+              className=" text-lg text-muted-foreground sm:block hidden mb-8 max-w-[540px]"
             >
               <motion.div
                 ref={ref}
@@ -119,7 +117,7 @@ const HeroSection = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 to={auth ? "/dashboard/charts" : "/signIn"}
-                className="px-6 py-3 bg-primary text-primary-foreground rounded-md font-medium hover:bg-primary/90 transition-colors"
+                className="px-6 py-3 flex justify-center md:justify-start  bg-primary text-primary-foreground rounded-md font-medium hover:bg-primary/90 transition-colors"
               >
                 {T("ابدأ الآن", "Get Started")}
               </Link>

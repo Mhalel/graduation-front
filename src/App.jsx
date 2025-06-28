@@ -16,7 +16,7 @@ import { useEffect, useState } from "react";
 import { MdSupportAgent } from "react-icons/md";
 import { IoIosArrowDown } from "react-icons/io";
 import EComp from "./pages/EComponentsinfo/EComp";
-import Controls from "./pages/dashBoard/ControlPage/Controls";
+import Controls from "./pages/dashBoard/ControlPage/Viewer3D";
 import Messanger from "./pages/messenger/App";
 import Numbers from "./pages/dashBoard/numbersPage/Numbers";
 import { useSocket } from "./hooks/SensorReadings";
@@ -25,6 +25,7 @@ import LongTermCharts from "./pages/dashBoard/LongTermCharts/LongTermCharts";
 import Sittings from "./pages/dashBoard/Sittings/Sittings";
 import ClickSpark from "./reactBits/ClickSpark";
 import { useTheme } from "./hooks/themeprovider";
+import Viewer3D from "./pages/dashBoard/ControlPage/Viewer3D";
 
 function App() {
   const { auth } = useAuth();
@@ -105,8 +106,8 @@ function App() {
               <Route path="charts" element={<ChartPage />} />
               <Route path="long-term-charts" element={<LongTermCharts />} />
               <Route path="sittings" element={<Sittings />} />
-              <Route path="account" element={<Accounts />} />
-              <Route path="control" element={<Controls />} />
+              {/* <Route path="account" element={<Accounts />} /> */}
+              <Route path="Viewer3D" element={<Viewer3D />} />
               <Route path="Support" element={<Messanger />} />
             </Route>
           )}

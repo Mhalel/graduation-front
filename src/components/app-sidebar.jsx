@@ -6,7 +6,7 @@ import {
   Search,
   Settings,
 } from "lucide-react";
-import { BsFillCalculatorFill } from "react-icons/bs";
+import { BsBadge3dFill, BsFillCalculatorFill } from "react-icons/bs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { FaChartArea } from "react-icons/fa6";
 import { MdNumbers, MdSupportAgent } from "react-icons/md";
@@ -52,11 +52,11 @@ const items = [
   //   url: "Support",
   //   icon: MdSupportAgent,
   // },
-  // {
-  //   title: { ar: "التحكم", en: "Control" },
-  //   url: "control",
-  //   icon: IoGameController,
-  // },
+  {
+    title: { ar: "3D", en: "3D" },
+    url: "Viewer3D",
+    icon: BsBadge3dFill,
+  },
   {
     title: { ar: "الاعدادات", en: "sittings" },
     url: "sittings",
