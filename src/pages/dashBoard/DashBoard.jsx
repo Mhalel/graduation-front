@@ -54,7 +54,7 @@ export default function DashBoard() {
               <BreadcrumbList>
                 <BreadcrumbItem className="block">
                   <Link to="/" className="flex items-center space-x-2">
-                    <GiGreenhouse size={30} color="white" />
+                    <GiGreenhouse size={30} color={isDark ?"white":"black"} />
                   </Link>
                 </BreadcrumbItem>
                 <BreadcrumbItem className=" block">

@@ -3,6 +3,7 @@ import { useLang, useT } from "@/hooks/LangContext";
 import LineChartWithTemperatureAndHumidity from "./Charts/LineChart";
 import CustomBarChart from "./Charts/CustomBarChart";
 import LightChart from "./Charts/LightChart";
+import { useEffect } from "react";
 
 export default function LongTermCharts() {
   const { lang } = useLang();
@@ -11,6 +12,9 @@ export default function LongTermCharts() {
   const sortedReadings = [...readings].sort(
     (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
   );
+  useEffect(()=>{
+    console.log("readings",readings)
+  },[readings])
   return (
     <div dir={lang === "ar" ? "rtl" : "ltr"} className="p-5">
       <section>
@@ -63,7 +67,7 @@ const Formatter = (values = [], sortedReadings) => {
 
     if (
       !lastAcceptedTime ||
-      currentTime - lastAcceptedTime >= 0 // 30 دقيقة بالميلي ثانية
+      currentTime - lastAcceptedTime >= 2 * 60 * 60 * 1000 // 30 دقيقة بالميلي ثانية
     ) {
       filteredReadings.push(reading);
       lastAcceptedTime = currentTime;

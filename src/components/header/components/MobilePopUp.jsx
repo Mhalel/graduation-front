@@ -30,13 +30,13 @@ const MobilePopUp = () => {
             {T("لوحة التحكم", "Dashboard")}
           </Link>
         )}
-
+        {/* 
         <Link
           to={"/Pricing"}
           className="text-foreground hover:bg-accent/30 block px-3 py-2 rounded-md text-base font-medium"
         >
           {T("التسعير", "Pricing")}
-        </Link>
+        </Link> */}
       </div>
 
       {/* Language selector in mobile menu */}
@@ -69,47 +69,50 @@ const MobilePopUp = () => {
       </div>
 
       <div className="pt-4 pb-3 border-t border-border">
-        <div className="flex items-center px-4 justify-between">
-          <div className="flex items-center  gap-2">
-            <div className="h-9 w-9 rounded-full bg-primary flex items-center justify-center">
-              {account?.photoLink ? (
-                <img src={account?.photoLink} alt="" />
-              ) : (
-                <span className="text-sm font-medium text-primary-foreground">
-                  {account?.userName?.slice(0, 2)}
-                </span>
+        {auth && (
+          <div className="flex items-center px-4 justify-between">
+            <div className="flex items-center  gap-2">
+              <div className="h-9 w-9 rounded-full bg-primary flex items-center justify-center">
+                {account?.photoLink ? (
+                  <img src={account?.photoLink} alt="" />
+                ) : (
+                  <span className="text-sm font-medium text-primary-foreground">
+                    {account?.userName?.slice(0, 2)}
+                  </span>
+                )}
+              </div>
+              <div className="ml-3">
+                <div className="text-base font-medium text-foreground">
+                  {account?.fullName}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {account?.email}
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                if (!auth) {
+                  nav("/login");
+                } else {
+                  toggleNotifications();
+                }
+              }}
+              className="relative p-2 rounded-full text-foreground hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              <Bell className="h-5 w-5" />
+              {auth && isNotificationOpend && (
+                <div className="absolute right-0 top-[4.7rem]">
+                  <Notifications
+                    isNotificationOpend={isNotificationOpend}
+                    setIsNotificationOpend={setIsNotificationOpend}
+                  />
+                </div>
               )}
-            </div>
-            <div className="ml-3">
-              <div className="text-base font-medium text-foreground">
-                {account?.fullName}
-              </div>
-              <div className="text-sm text-muted-foreground">
-                {account?.email}
-              </div>
-            </div>
+            </button>
           </div>
-          <button
-            onClick={() => {
-              if (!auth) {
-                nav("/login");
-              } else {
-                toggleNotifications();
-              }
-            }}
-            className="relative p-2 rounded-full text-foreground hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-ring"
-          >
-            <Bell className="h-5 w-5" />
-            {auth && isNotificationOpend && (
-              <div className="absolute right-0 top-[4.7rem]">
-                <Notifications
-                  isNotificationOpend={isNotificationOpend}
-                  setIsNotificationOpend={setIsNotificationOpend}
-                />
-              </div>
-            )}
-          </button>
-        </div>
+        )}
+
         <div className="mt-3 px-4 space-y-1">
           {!auth && (
             <div className="pt-2 flex flex-col text-center space-y-2">
@@ -119,7 +122,10 @@ const MobilePopUp = () => {
               >
                 {T("تسجيل الدخول", "Sign in")}
               </Link>
-              <Link className="w-full bg-primary text-primary-foreground hover:bg-primary/90 px-3 py-2 rounded-md font-medium text-base transition-colors">
+              <Link
+                to={"/Signup"}
+                className="w-full bg-primary text-primary-foreground hover:bg-primary/90 px-3 py-2 rounded-md font-medium text-base transition-colors"
+              >
                 {T("التسجيل", "Sign up")}
               </Link>
             </div>

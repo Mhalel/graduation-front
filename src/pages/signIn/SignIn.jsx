@@ -9,10 +9,12 @@ import { Lock, Mail, Eye, EyeOff, User } from "lucide-react";
 import { useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
+import { useSocket } from "@/hooks/SensorReadings";
 
 const Signin = () => {
   const [loading, setLoading] = useState(false);
   const { isDark } = useTheme();
+  const { setReadings } = useSocket();
   const nav = useNavigate();
   const T = useT();
   const { openSnackbar } = useSnackbar();
@@ -64,11 +66,14 @@ const Signin = () => {
           openSnackbar(T("تم تسجيل الدخول بنجاح", "Signed in successfully"), {
             type: "success",
           });
-          Readings.getRead(500)
+          Readings.getRead(700)
             .then((res) => {
-              localStorage.setItem("sensor_readings", JSON.stringify(res.data));
+              setReadings(res.data?.data)
+              localStorage.setItem("sensor_readings", JSON.stringify(res.data?.data));
             })
-            .catch(console.error);
+            .catch((err) => {
+              console.error(err);
+            });
           Readings.getAlerts(800)
             .then((res) => {
               localStorage.setItem("wornings", JSON.stringify(res.data));

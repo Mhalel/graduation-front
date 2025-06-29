@@ -82,9 +82,9 @@ function App() {
 
   //   return () => clearInterval(interval); // تنظيف عند إزالة المكون
   // }, []);
-  // useEffect(() => {
-  //   console.log("realTimeReading", realTimeReading);
-  // }, [realTimeReading]);
+  useEffect(() => {
+    console.log("realTimeReading", realTimeReading);
+  }, [realTimeReading]);
   return (
     <ClickSpark sparkColor={isDark ? "#ffff" : "#000000"}>
       <div>
