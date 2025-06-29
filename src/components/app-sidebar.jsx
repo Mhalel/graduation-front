@@ -25,6 +25,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useT } from "@/hooks/LangContext";
 import { useAuth } from "@/hooks/AuthContext";
 import { IoGameController } from "react-icons/io5";
+import { useSocket } from "@/hooks/SensorReadings";
 
 // Menu items.
 const items = [
@@ -72,6 +73,7 @@ const items = [
 const gender = "male";
 export function AppSidebar() {
   const T = useT();
+  const { aiReq } = useSocket();
   const { account } = useAuth();
   return (
     <Sidebar>
@@ -114,10 +116,12 @@ export function AppSidebar() {
                         <item.icon />
                         <span>{T(item.title.ar, item.title.en)}</span>
                       </span>
-                      { item.url === "Ai" && <span className="bg-red-500 rounded-full size-4  text-[10px] flex justify-center items-center text-white" >
-                        1
-                      </span> }
-                      
+                      {aiReq.length > 0 &&
+                        item.url === "Ai" && (
+                          <span className="bg-red-500 rounded-full size-4  text-[10px] flex justify-center items-center text-white">
+                            {aiReq.length}
+                          </span>
+                        )}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

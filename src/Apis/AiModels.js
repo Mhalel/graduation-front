@@ -7,7 +7,7 @@ const AiRequsts = {
     return axiosClient.post(
       url,
       { content: data },
-      { headers: { token: auth } }
+      { headers: { token: auth || localStorage.getItem("authToken") } }
     );
   },
   GptChatHestory: ({ auth }) => {
@@ -24,7 +24,7 @@ const AiRequsts = {
   },
   DeleteAiScima: ({ lang }) => {
     const url = "/AiRequsts/deleteAiScima";
-    return axiosClient.get(url, {
+    return axiosClient.delete(url, {
       headers: { lang },
     });
   },

@@ -12,13 +12,14 @@ import {
   X,
   Camera,
 } from "lucide-react";
-import { useT } from "@/hooks/LangContext";
+import { useLang, useT } from "@/hooks/LangContext";
 import Delete from "@/Apis/Delete";
 import { useSnackbar } from "@/hooks/SnackBar";
 import { useAuth } from "@/hooks/AuthContext";
 import { useSocket } from "@/hooks/SensorReadings";
 import { useFileUploader } from "@/hooks/FileProvider";
 import UserApi from "@/Apis/User";
+import AiRequsts from "@/Apis/AiModels";
 
 export default function Sittings() {
   const { setWorning, setReadings, setRealTimeReading } = useSocket();
@@ -62,6 +63,8 @@ export default function Sittings() {
 
   const T = useT();
   const { openSnackbar } = useSnackbar();
+  const { setAiReq } = useSocket();
+  const { lang } = useLang();
   const [isDeleting, setIsDeleting] = useState({
     account: false,
     readings: false,
@@ -150,12 +153,15 @@ export default function Sittings() {
       setIsDeleting((prev) => ({ ...prev, notifications: true }));
       try {
         Delete.DeleteAlerts();
+        AiRequsts.DeleteAiScima({ lang });
         openSnackbar(
           T("تم حذف الإشعارات بنجاح", "Notifications deleted successfully"),
           { type: "success" }
         );
         localStorage.removeItem("wornings");
+        localStorage.removeItem("aiReq");
         setWorning([]);
+        setAiReq([]);
         console.log("تم حذف الإشعارات");
       } catch (error) {
         console.error("خطأ في حذف الإشعارات:", error);

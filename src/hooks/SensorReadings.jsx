@@ -36,10 +36,10 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     const saved = localStorage.getItem("sensor_readings");
     const wornings = localStorage.getItem("wornings");
-    const setAiReq = localStorage.getItem("AiReq");
+    const Ai = localStorage.getItem("AiReq");
     const parsed = JSON.parse(saved);
     const worningsparsed = JSON.parse(wornings);
-    const setAiReqParesed = JSON.parse(setAiReq);
+    const AiParesed = JSON.parse(Ai);
     if (saved) {
       try {
         if (Array.isArray(parsed)) {
@@ -63,6 +63,19 @@ export const SocketProvider = ({ children }) => {
         }
       } catch (err) {
         console.error("❌ Error parsing localStorage wornings:", err);
+        setWorning([]); // ✅ الصح
+      }
+    }
+    if (Ai) {
+      try {
+        if (Array.isArray(AiParesed)) {
+          setWorning(AiParesed); // ✅ الصح
+        } else {
+          console.warn("📛 Saved Ai is not an array");
+          setWorning([]); // ✅ الصح
+        }
+      } catch (err) {
+        console.error("❌ Error parsing localStorage Ai:", err);
         setWorning([]); // ✅ الصح
       }
     }
@@ -96,6 +109,19 @@ export const SocketProvider = ({ children }) => {
         localStorage.setItem("wornings", JSON.stringify(updated));
         return updated;
       });
+
+      if (callback) callback("✅ Received on frontend");
+    });
+
+    socketInstance.on("newAiResult", (data, callback) => {
+      setAiReq((prev) => {
+        const safePrev3 = Array.isArray(prev) ? prev : [];
+        const updated3 = [...safePrev3, data];
+
+        localStorage.setItem("aiReq", JSON.stringify(updated3));
+        return updated3;
+      });
+
       if (callback) callback("✅ Received on frontend");
     });
 
@@ -111,9 +137,11 @@ export const SocketProvider = ({ children }) => {
         readings,
         realTimeReading,
         worning,
+        aiReq,
         setRealTimeReading,
         setReadings,
         setWorning,
+        setAiReq,
       }}
     >
       {children}

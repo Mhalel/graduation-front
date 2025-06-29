@@ -100,7 +100,6 @@ function App() {
               </>
             )}
             {/* {auth && <Route path="Profile/:id" element={<ProfilePage />} />} */}
-            
           </Route>
           {auth && (
             <Route path="/dashboard" element={<DashBoard />}>

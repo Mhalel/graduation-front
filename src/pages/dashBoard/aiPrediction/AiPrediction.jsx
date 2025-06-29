@@ -9,12 +9,17 @@ import {
 import { useLang, useT } from "@/hooks/LangContext";
 import AiRequsts from "@/Apis/AiModels";
 import SmartSiloSkeleton from "./AiPredictionSkelaton";
+import { useSocket } from "@/hooks/SensorReadings";
 
 const AiPrediction = () => {
   const { lang } = useLang();
+  const { aiReq,setAiReq } = useSocket();
   const [loading, setLoading] = useState(false);
   const [Data, setData] = useState([]);
-
+  useEffect(() => {
+    localStorage.removeItem("aiReq");
+    setAiReq([])
+  }, []);
   useEffect(() => {
     const handleGetData = async () => {
       setLoading(true);
@@ -154,7 +159,7 @@ const AiPrediction = () => {
               </div>
 
               <div className="grid justify-end items-center grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6">
-                {[...Data].map((prediction, i) => (
+                {[...Data, ...aiReq].map((prediction, i) => (
                   <div
                     key={i}
                     className="bg-white dark:bg-black rounded-lg border border-gray-200 dark:border-gray-800 p-4 hover:shadow-lg transition-shadow"
