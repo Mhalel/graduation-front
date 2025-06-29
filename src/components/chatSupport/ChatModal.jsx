@@ -7,7 +7,7 @@ import EmojiPicker from "emoji-picker-react";
 import { useEffect, useRef, useState } from "react";
 import { useT } from "@/hooks/LangContext";
 import { useAuth } from "@/hooks/AuthContext";
-import GPTApis from "@/Apis/AiModels";
+import AiRequsts from "@/Apis/AiModels";
 
 const ChatModal = ({ toggleOptions }) => {
   const [text, setText] = useState("");
@@ -32,7 +32,7 @@ const ChatModal = ({ toggleOptions }) => {
 
     setChatLoading(true);
 
-    GPTApis.GptChat({ auth, data: text })
+    AiRequsts.GptChat({ auth, data: text })
       .then((res) => {
         const { assistantReply } = res.data;
         const newAssistantMsg = {

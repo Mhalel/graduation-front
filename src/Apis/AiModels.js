@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import axiosClient from "./axiosCLient";
 
-const GPTApis = {
+const AiRequsts = {
   GptChat: ({ auth, data }) => {
     const url = "/gpt/gpt-chat";
     return axiosClient.post(
@@ -16,6 +16,18 @@ const GPTApis = {
       headers: { token: auth || localStorage.getItem("authToken") },
     });
   },
+  GetAiScima: ({ lang }) => {
+    const url = "/AiRequsts/GetAiScima";
+    return axiosClient.get(url, {
+      headers: { lang },
+    });
+  },
+  DeleteAiScima: ({ lang }) => {
+    const url = "/AiRequsts/deleteAiScima";
+    return axiosClient.get(url, {
+      headers: { lang },
+    });
+  },
 };
 
-export default GPTApis;
+export default AiRequsts;

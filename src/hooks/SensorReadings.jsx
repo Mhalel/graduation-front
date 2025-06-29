@@ -10,6 +10,7 @@ export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [readings, setReadings] = useState([]);
   const [worning, setWorning] = useState([]);
+  const [aiReq, setAiReq] = useState([]);
   const [realTimeReading, setRealTimeReading] = useState({
     autoState: false,
     dhFanState: false,
@@ -35,8 +36,10 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     const saved = localStorage.getItem("sensor_readings");
     const wornings = localStorage.getItem("wornings");
+    const setAiReq = localStorage.getItem("AiReq");
     const parsed = JSON.parse(saved);
     const worningsparsed = JSON.parse(wornings);
+    const setAiReqParesed = JSON.parse(setAiReq);
     if (saved) {
       try {
         if (Array.isArray(parsed)) {

@@ -26,6 +26,7 @@ import Sittings from "./pages/dashBoard/Sittings/Sittings";
 import ClickSpark from "./reactBits/ClickSpark";
 import { useTheme } from "./hooks/themeprovider";
 import Viewer3D from "./pages/dashBoard/ControlPage/Viewer3D";
+import AiPrediction from "./pages/dashBoard/aiPrediction/AiPrediction";
 
 function App() {
   const { auth } = useAuth();
@@ -33,10 +34,11 @@ function App() {
   const { isDark } = useTheme();
   const randBool = () => Math.random() > 0.5;
 
-  // Random number from 0 to 100
-  const randValue = () => Math.floor(Math.random() * 101);
+  // Random number in a specific range
+  const randRange = (min, max) =>
+    Math.floor(Math.random() * (max - min + 1)) + min;
 
-  // Generate random sensor data
+  // Generate random sensor data with your conditions
   const generateRandomData = () => {
     return {
       autoState: randBool(),
@@ -45,16 +47,16 @@ function App() {
       acFanState: randBool(),
       pumpState: randBool(),
       ledState: randBool(),
-      lux: randValue(),
-      luxGoal: randValue(),
-      eTemp: randValue().toString(),
-      humidity: randValue().toString(),
-      pressure: randValue().toFixed(2),
-      cTemp: randValue().toString(),
-      s1Temp: randValue().toString(),
-      s2Temp: randValue().toString(),
-      s1Moisture: randValue().toString(),
-      s2Moisture: randValue().toString(),
+      lux: randRange(101, 150), // greater than 100 but not increasing (fixed at 101)
+      luxGoal: randRange(60, 100), // you didn't specify a range for this, so left as 0-100
+      eTemp: randRange(10, 20).toString(), // no condition provided
+      humidity: randRange(30, 60).toString(), // between 30 and 80
+      pressure: randRange(1000, 1020).toFixed(2), // no condition provided
+      cTemp: randRange(25, 35).toString(), // between 20 and 45
+      s1Temp: randRange(10, 20).toString(), // less than 30
+      s2Temp: randRange(10, 20).toString(), // less than 30
+      s1Moisture: randRange(30, 40).toString(), // between 30 a40 80
+      s2Moisture: randRange(30, 40).toString(), // between 30 a40 80
     };
   };
 
@@ -98,6 +100,7 @@ function App() {
               </>
             )}
             {/* {auth && <Route path="Profile/:id" element={<ProfilePage />} />} */}
+            
           </Route>
           {auth && (
             <Route path="/dashboard" element={<DashBoard />}>
@@ -109,6 +112,7 @@ function App() {
               {/* <Route path="account" element={<Accounts />} /> */}
               <Route path="Viewer3D" element={<Viewer3D />} />
               <Route path="Support" element={<Messanger />} />
+              <Route path="Ai" element={<AiPrediction />} />
             </Route>
           )}
           <Route path="*" element={<NoPage />} />

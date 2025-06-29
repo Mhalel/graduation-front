@@ -1,6 +1,6 @@
 import AuthApi from "@/Apis/Auth";
 import Readings from "@/Apis/GreenHouseRequsts";
-import GPTApis from "@/Apis/AiModels";
+import AiRequsts from "@/Apis/AiModels";
 import { useAuth } from "@/hooks/AuthContext";
 import { useT } from "@/hooks/LangContext";
 import { useSnackbar } from "@/hooks/SnackBar";
@@ -74,7 +74,7 @@ const Signin = () => {
               localStorage.setItem("wornings", JSON.stringify(res.data));
             })
             .catch(console.error);
-          GPTApis.GptChatHestory({ auth })
+          AiRequsts.GptChatHestory({ auth })
             .then((res) => {
               const sortedMessages = res.data.Hestory.sort(
                 (a, b) => new Date(a.createdAt) - new Date(b.createdAt)

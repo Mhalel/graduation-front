@@ -132,7 +132,7 @@ const HeroSection = () => {
               dir={T("rtl", "ltr")}
               className=" text-lg break-words text-muted-foreground sm:block hidden mb-8 max-w-[540px]"
               ref={ref}
-              initial="hidden "
+              initial="hidden"
               animate={controls}
               variants={containerVariants}
             >

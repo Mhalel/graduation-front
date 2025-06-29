@@ -1,4 +1,5 @@
 import {
+  BrainCircuit,
   Calendar,
   ChartPie,
   Home,
@@ -58,6 +59,11 @@ const items = [
     icon: BsBadge3dFill,
   },
   {
+    title: { ar: "Ai", en: "Ai" },
+    url: "Ai",
+    icon: BrainCircuit,
+  },
+  {
     title: { ar: "الاعدادات", en: "sittings" },
     url: "sittings",
     icon: Settings,
@@ -100,9 +106,18 @@ export function AppSidebar() {
                   key={item.url}
                 >
                   <SidebarMenuButton asChild>
-                    <Link to={item.url}>
-                      <item.icon />
-                      <span>{T(item.title.ar, item.title.en)}</span>
+                    <Link
+                      className="flex items-center justify-between"
+                      to={item.url}
+                    >
+                      <span className="flex items-center gap-3">
+                        <item.icon />
+                        <span>{T(item.title.ar, item.title.en)}</span>
+                      </span>
+                      { item.url === "Ai" && <span className="bg-red-500 rounded-full size-4  text-[10px] flex justify-center items-center text-white" >
+                        1
+                      </span> }
+                      
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
