@@ -194,11 +194,11 @@ const AiPrediction = () => {
                     </div>
 
                     {/* التاريخ */}
-                    <div className="text-center">
+                    {/* <div className="text-center">
                       <span className="text-sm text-gray-500 dark:text-gray-400">
                         {formatDate(prediction.createdAt)}
                       </span>
-                    </div>
+                    </div> */}
                   </div>
                 ))}
               </div>
