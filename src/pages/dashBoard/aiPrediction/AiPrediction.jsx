@@ -81,7 +81,7 @@ const AiPrediction = () => {
           <SmartSiloSkeleton />
         ) : (
           <div className="max-w-7xl w-fit mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
               <div className="bg-white dark:bg-black rounded-xl border border-gray-200 dark:border-gray-800 p-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -145,7 +145,7 @@ const AiPrediction = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Data Grid */}
             <div
@@ -178,20 +178,20 @@ const AiPrediction = () => {
                     </div>
 
                     {/* التنبؤ */}
-                    <div className="text-center mb-3">
+                    {/* <div className="text-center mb-3">
                       <span className="text-lg font-bold text-black dark:text-white">
                         {prediction.prediction === "fresh"
                           ? T("طازج", "Fresh")
                           : T("فاسد", "Spoiled")}
                       </span>
-                    </div>
+                    </div> */}
 
                     {/* معدل الثقة */}
-                    <div className="text-center mb-3">
+                    {/* <div className="text-center mb-3">
                       <span className="text-2xl font-bold text-black dark:text-white">
                         {prediction.confidence}%
                       </span>
-                    </div>
+                    </div> */}
 
                     {/* التاريخ */}
                     {/* <div className="text-center">
